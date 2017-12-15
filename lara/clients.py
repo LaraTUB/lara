@@ -1,13 +1,18 @@
 from github import Github
 
+from .github_app import GithubApp
+from .github_handler import GithubHandler
+
 
 class GithubClient(object):
 
     def __init__(self, github_app, installation_id):
         auth = github_app.get_access_token(installation_id)
         self.gh = Github(auth.token)
-        self.organization = self.gh.get_organization()
-        # Repository is hardocded until we implement multi repo support
+        owner = github_app.get_owner()
+        if owner['type'] == 'Organization':
+            self.organization = self.gh.get_organization(owner['login'])
+        # Repository is hardcoded until we implement multi repo support
         self.repo = self.organization.get_repo('test')
 
     def get_user(self):

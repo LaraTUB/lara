@@ -2,7 +2,7 @@ import jwt
 import time
 import json
 from http.client import HTTPSConnection
-from github import GithubException, InstallationAuthorization
+from github import InstallationAuthorization, GithubException
 
 
 class GithubApp(object):
@@ -35,7 +35,31 @@ class GithubApp(object):
             algorithm="RS256"
         )
 
-    def get_access_token(self, installation_id, user_id=None):
+    def get_owner(self):
+        conn = HTTPSConnection("api.github.com")
+        conn.request(
+            method="GET",
+            url="/app",
+            headers={
+                "Authorization": "Bearer {}".format(self.create_jwt().decode()),
+                "Accept": "application/vnd.github.machine-man-preview+json",
+                "User-Agent": "LaraTUB/lara"
+            }
+        )
+        response = conn.getresponse()
+        response_text = response.read().decode('utf-8')
+        conn.close()
+
+        if response.status == 200:
+            data = json.loads(response_text)
+            return data['owner']
+        else:
+            raise GithubException(
+                status=response.status,
+                data=response_text
+            )
+
+    def get_access_token(self, installation_id):
         """
         Get an access token for the given installation id.
         POSTs https://api.github.com/installations/<installation_id>/access_tokens

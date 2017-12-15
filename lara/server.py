@@ -1,5 +1,5 @@
 from lara import app
-from .authentication import GithubApp
+from .github_app import GithubApp
 from flask_restful import reqparse, Api, Resource
 from .clients import GithubClient
 
