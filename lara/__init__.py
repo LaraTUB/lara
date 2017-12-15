@@ -11,5 +11,5 @@ except RuntimeError:
     pass
 
 
-import rest
-import webhook
+import lara.server
+import lara.webhook

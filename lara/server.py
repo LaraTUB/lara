@@ -1,15 +1,18 @@
 from lara import app
-from flask import jsonify
-from flask_restful import reqparse, abort, Api, Resource
-from clients import GithubClient
+from .authentication import GithubApp
+from flask_restful import reqparse, Api, Resource
+from .clients import GithubClient
 
+# Connecting with the Lara GitHub App
+with open(app.config['GITHUB_APP_PRIVATE_KEY'], 'r') as f:
+    private_key = f.read()
+github_app = GithubApp(app.config['GITHUB_APP_ID'], private_key)
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
+# So far only a single installation is supported
+# The encapsulation allows us to use multiple installations on one server in the future though,
+# so we could offer the Lara GitHub App as a Service
+github_client = GithubClient(github_app, app.config['GITHUB_INSTALLATION_ID'])
 
-
-api = Api(app)
 
 class Issue(Resource):
 
@@ -43,5 +46,11 @@ class IssueList(Resource):
         return resp, 201
 
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+
+api = Api(app)
 api.add_resource(Issue, '/issue/<int:issue_id>')
 api.add_resource(IssueList, '/issues')
