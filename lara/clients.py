@@ -1,22 +1,24 @@
 from github import Github
 
-from .github_app import GithubApp
-from .github_handler import GithubHandler
-
 
 class GithubClient(object):
 
     def __init__(self, github_app, installation_id):
         auth = github_app.get_access_token(installation_id)
         self.gh = Github(auth.token)
-        owner = github_app.get_owner()
-        if owner['type'] == 'Organization':
-            self.organization = self.gh.get_organization(owner['login'])
+        owner, self.is_organization = github_app.get_installation_owner(installation_id)
+        # Only organization installations supported at this point
+        if self.is_organization:
+            self.organization = self.gh.get_organization(owner)
+        else:
+            raise Exception  # TODO custom Exceptions
+
         # Repository is hardcoded until we implement multi repo support
+        # This can be easily done with 'GET /installation/repositories'
         self.repo = self.organization.get_repo('test')
 
-    def get_user(self):
-        return self.gh.get_user()
+    #def get_user(self):
+    #    return self.gh.get_user()
 
     def get_organization(self):
         return self.organization

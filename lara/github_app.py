@@ -35,11 +35,11 @@ class GithubApp(object):
             algorithm="RS256"
         )
 
-    def get_owner(self):
+    def get_installation_owner(self, installation_id):
         conn = HTTPSConnection("api.github.com")
         conn.request(
             method="GET",
-            url="/app",
+            url="/app/installations/{}".format(installation_id),
             headers={
                 "Authorization": "Bearer {}".format(self.create_jwt().decode()),
                 "Accept": "application/vnd.github.machine-man-preview+json",
@@ -52,7 +52,8 @@ class GithubApp(object):
 
         if response.status == 200:
             data = json.loads(response_text)
-            return data['owner']
+            is_organization = data['target_type'] == 'Organization'
+            return data['account']['login'], is_organization
         else:
             raise GithubException(
                 status=response.status,
