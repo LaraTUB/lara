@@ -22,11 +22,11 @@ class Issue(Resource):
         self.parser.add_argument('body')
 
     def get(self, issue_id):
-        return GithubClient.get_repo_issue(issue_id)
+        return github_client.get_repo_issue(issue_id)
 
     def put(self, issue_id):
         kwargs = self.parser.parse_args()
-        resp = GithubClient.update_repo_issue(issue_id, **kwargs)
+        resp = github_client.update_repo_issue(issue_id, **kwargs)
         return resp, 201
 
 
@@ -38,11 +38,11 @@ class IssueList(Resource):
         self.parser.add_argument('body')
 
     def get(self):
-        return GithubClient.list_repo_issues()
+        return github_client.list_repo_issues()
 
     def post(self):
         kwargs = self.parser.parse_args()
-        resp = GithubClient.create_repo_issue(**kwargs)
+        resp = github_client.create_repo_issue(**kwargs)
         return resp, 201
 
 
