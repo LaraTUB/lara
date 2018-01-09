@@ -1,0 +1,89 @@
+[
+  {
+    "id": "068d91a8-19fe-45ca-a6c8-3e298ad82f75",
+    "data": [
+      {
+        "text": "show me issues",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "9b42ecb4-12ce-46b6-9191-3a64131abc14",
+    "data": [
+      {
+        "text": "all issues, please",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "c5553ade-4205-4af1-a4d7-9b2bf6c5954f",
+    "data": [
+      {
+        "text": "list",
+        "alias": "issue-list",
+        "meta": "@issue-list",
+        "userDefined": false
+      },
+      {
+        "text": " all issues",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "4eacfd6a-1b38-40b3-b264-4aa660cdaf95",
+    "data": [
+      {
+        "text": "issues?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1515486225
+  },
+  {
+    "id": "719df187-f39b-4ed2-b884-3ebddb36adf2",
+    "data": [
+      {
+        "text": "issues for me?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1515486225
+  },
+  {
+    "id": "79f57569-fcce-4ef2-a1f2-180ecd2845bd",
+    "data": [
+      {
+        "text": "Any issue?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1515486225
+  },
+  {
+    "id": "e02071e8-e6d5-4374-ac15-854e87a46184",
+    "data": [
+      {
+        "text": "Any new issue?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1515486225
+  }
+]

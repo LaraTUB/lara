@@ -1,0 +1,117 @@
+[
+  {
+    "id": "6bda145d-b285-487c-b90e-d6291b7321ea",
+    "data": [
+      {
+        "text": "delete",
+        "alias": "issue-action",
+        "meta": "@issue-action",
+        "userDefined": true
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "1",
+        "alias": "issue-id",
+        "meta": "@sys.number-integer",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "caf2af72-61dd-405f-9b37-755557033a0d",
+    "data": [
+      {
+        "text": "cancel",
+        "alias": "issue-action",
+        "meta": "@issue-action",
+        "userDefined": true
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "9",
+        "alias": "issue-id",
+        "meta": "@sys.number-integer",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "c42ec64f-5b4d-4105-bbbc-642a9fc93401",
+    "data": [
+      {
+        "text": "close",
+        "alias": "issue-action",
+        "meta": "@issue-action",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "7",
+        "alias": "issue-id",
+        "meta": "@sys.number-integer",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "e85aaedc-4830-4542-8455-8fb1127199cd",
+    "data": [
+      {
+        "text": "delete",
+        "alias": "issue-action",
+        "meta": "@issue-action",
+        "userDefined": true
+      },
+      {
+        "text": " issue ",
+        "userDefined": false
+      },
+      {
+        "text": "6",
+        "alias": "issue-id",
+        "meta": "@sys.number-integer",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "2d5cf5db-a28c-4195-a7bc-a8dd0660ee99",
+    "data": [
+      {
+        "text": "close",
+        "alias": "issue-action",
+        "meta": "@issue-action",
+        "userDefined": true
+      },
+      {
+        "text": " issue",
+        "userDefined": false
+      },
+      {
+        "text": " 6",
+        "alias": "issue-id",
+        "meta": "@sys.number-integer",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  }
+]

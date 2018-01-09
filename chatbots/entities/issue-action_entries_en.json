@@ -1,0 +1,30 @@
+[
+  {
+    "value": "update",
+    "synonyms": [
+      "update"
+    ]
+  },
+  {
+    "value": "open",
+    "synonyms": [
+      "open",
+      "create",
+      "new"
+    ]
+  },
+  {
+    "value": "close",
+    "synonyms": [
+      "close"
+    ]
+  },
+  {
+    "value": "list",
+    "synonyms": [
+      "list",
+      "show",
+      "get"
+    ]
+  }
+]

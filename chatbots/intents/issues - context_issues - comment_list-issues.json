@@ -1,0 +1,61 @@
+{
+  "id": "45db10c1-b5a0-42b3-afd5-0b367fe5ebd4",
+  "name": "issues - context:issues - comment:list-issues",
+  "auto": true,
+  "contexts": [
+    "issues"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue.list",
+      "affectedContexts": [
+        {
+          "name": "issues",
+          "parameters": {},
+          "lifespan": 5
+        },
+        {
+          "name": "issue-list",
+          "parameters": {},
+          "lifespan": 5
+        }
+      ],
+      "parameters": [
+        {
+          "id": "2de86af1-6303-48c9-ae84-237ca093bbfe",
+          "required": false,
+          "dataType": "@issue-list",
+          "name": "issue-list",
+          "value": "$issue-list",
+          "isList": false
+        },
+        {
+          "id": "b31b2649-61b3-4231-99b8-12a08d21f420",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "issue-id",
+          "value": "$issue-id",
+          "isList": false
+        },
+        {
+          "id": "5e807b09-eed9-43d7-8afe-c4d6f6207463",
+          "required": false,
+          "dataType": "@issue-parameters",
+          "name": "issue-parameters",
+          "value": "$issue-parameters",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1513087425,
+  "fallbackIntent": false,
+  "events": []
+}

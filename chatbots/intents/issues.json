@@ -1,0 +1,38 @@
+{
+  "id": "0a23e70e-5595-4451-92dc-384aedf45bb1",
+  "name": "issues",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue",
+      "affectedContexts": [
+        {
+          "name": "issues",
+          "parameters": {},
+          "lifespan": 2
+        }
+      ],
+      "parameters": [
+        {
+          "id": "ad00b402-050e-4dcd-93f7-71dbde0c2dd1",
+          "required": false,
+          "dataType": "@issue-list",
+          "name": "issue-list",
+          "value": "$issue-list",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1515486225,
+  "fallbackIntent": false,
+  "events": []
+}

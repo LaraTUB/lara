@@ -1,0 +1,90 @@
+{
+  "id": "854082b6-f75c-4e40-9f5a-56ae0479a4b5",
+  "name": "New Issue Intent",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue.create",
+      "affectedContexts": [
+        {
+          "name": "issues",
+          "parameters": {},
+          "lifespan": 5
+        }
+      ],
+      "parameters": [
+        {
+          "id": "9ba8b19c-f945-4d2b-9b0f-54430d7dc5b1",
+          "required": true,
+          "dataType": "@sys.any",
+          "name": "issue-title",
+          "value": "$issue-title",
+          "prompts": [
+            {
+              "lang": "en",
+              "value": "what\u0027s your issue title?"
+            },
+            {
+              "lang": "en",
+              "value": "Could you tell me your issue title?"
+            }
+          ],
+          "isList": false
+        },
+        {
+          "id": "0b65a7b1-357d-4857-a804-2f4d69052463",
+          "required": true,
+          "dataType": "@sys.any",
+          "name": "issue-body",
+          "value": "$issue-body",
+          "prompts": [
+            {
+              "lang": "en",
+              "value": "And your content?"
+            },
+            {
+              "lang": "en",
+              "value": "what\u0027s your issue content?"
+            }
+          ],
+          "isList": false
+        },
+        {
+          "id": "582c3d36-0e64-4be5-b3c7-c57fcc4439f2",
+          "required": false,
+          "dataType": "@sys.any",
+          "name": "issue-assignee",
+          "value": "",
+          "prompts": [
+            {
+              "lang": "en",
+              "value": "Who do you want to assign?"
+            },
+            {
+              "lang": "en",
+              "value": "And assignee?"
+            }
+          ],
+          "isList": false
+        },
+        {
+          "id": "d71f5aa1-b911-4fbf-8015-e57178223170",
+          "dataType": "@issue-create",
+          "name": "issue-create",
+          "value": "$issue-create"
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1515500255,
+  "fallbackIntent": false,
+  "events": []
+}

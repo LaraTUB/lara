@@ -1,0 +1,59 @@
+{
+  "id": "3e2091aa-e504-4b2b-b446-5be848977201",
+  "name": "issues - context:issues - comment:update-issues",
+  "auto": true,
+  "contexts": [
+    "issues"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue.update",
+      "affectedContexts": [
+        {
+          "name": "issues",
+          "parameters": {},
+          "lifespan": 5
+        },
+        {
+          "name": "issue-update",
+          "parameters": {},
+          "lifespan": 5
+        }
+      ],
+      "parameters": [
+        {
+          "id": "dcced5a5-5e05-4e4b-8bc4-b5f9fe997db8",
+          "required": false,
+          "dataType": "@issue-action",
+          "name": "issue-action",
+          "value": "$issue-action",
+          "isList": false
+        },
+        {
+          "id": "850fd7f0-da35-4257-b9c2-fe487e3fc3ac",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "issue-id",
+          "value": "$issue-id",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1513084175,
+  "fallbackIntent": false,
+  "events": []
+}

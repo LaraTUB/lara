@@ -1,0 +1,51 @@
+[
+  {
+    "value": "title",
+    "synonyms": [
+      "title"
+    ]
+  },
+  {
+    "value": "body",
+    "synonyms": [
+      "body"
+    ]
+  },
+  {
+    "value": "assignee",
+    "synonyms": [
+      "assignee"
+    ]
+  },
+  {
+    "value": "state",
+    "synonyms": [
+      "state"
+    ]
+  },
+  {
+    "value": "labels",
+    "synonyms": [
+      "labels"
+    ]
+  },
+  {
+    "value": "true",
+    "synonyms": [
+      "true",
+      "of course",
+      "go ahead",
+      "yes",
+      "Yes",
+      "sure"
+    ]
+  },
+  {
+    "value": "false",
+    "synonyms": [
+      "false",
+      "Oh, no",
+      "no"
+    ]
+  }
+]
