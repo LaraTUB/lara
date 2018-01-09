@@ -1,2 +1,5 @@
+.idea
 *.pyc
+
+config/lara.private-key.pem
 instance/config.py
