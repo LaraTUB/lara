@@ -2,29 +2,42 @@ import random
 import string
 from http.client import HTTPSConnection
 from urllib.parse import parse_qs
-from lara import app
+
+from github import Github
+
+from lara import app, get_db
 from flask import request, redirect, g
-from lara import github_app
+
 
 @app.route('/')
 def hello_world():
-    installation = github_app.get_installation(app.config['GITHUB_APP_ID'])
-    installation
+    #installation = github_app.get_installation(app.config['GITHUB_APP_ID'])
     return 'Hello, World!'
 
 
-@app.route('/login/callback')
-def login_callback():
-    #if g.get('states') is None:
-    #    g.states = []
-    code = request.args.get('code')
-    if code is None:
-        random_state = 'aaa' # ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-        #g.states.append(random_state)
-        redirect_url = 'https://github.com/login/oauth/authorize?client_id={}&state={}'.format(app.config['GITHUB_OAUTH_CLIENT_ID'], random_state)
+@app.route('/auth')
+def auth():
+    # TODO check parameters
+    # TODO factor out authentication tokens
+    # TODO created time
+    
+    db = get_db()
+
+    token = request.args.get('token')
+    if token:
+        state = ''.join(random.choices(string.ascii_letters + string.digits, k=30))
+        db.execute('UPDATE user SET state=? WHERE token=?', (state, token))
+        db.commit()
+        redirect_url = 'https://github.com/login/oauth/authorize?client_id={}&state={}'.format(app.config['GITHUB_OAUTH_CLIENT_ID'], state)
         return redirect(redirect_url, code=302)
-    state = request.args.get('state')
-    if state in ['aaa']:
+
+    code = request.args.get('code')
+    if code:
+        state = request.args.get('state')
+        rows = db.execute('SELECT * FROM user WHERE state=?', (state,)).fetchall()
+        if len(rows) != 1:
+            raise Exception
+
         conn = HTTPSConnection("github.com")
         conn.request(
             method='POST',
@@ -43,7 +56,13 @@ def login_callback():
         conn.close()
 
         access_token = parse_qs(response_text)['access_token'][0]
-        return parse_qs(response_text)
+        gh = Github(access_token)
+        user = gh.get_user()
+
+        db.execute('UPDATE user SET github_name=?, github_login=? WHERE state=?', (user.name, user.login, state))
+        db.commit()
+
+        return "Successfully connected Slack user id {} with Github user {}".format(rows[0][3], user.login)
     else:
         raise Exception('Bad state', status_code=400)
 
