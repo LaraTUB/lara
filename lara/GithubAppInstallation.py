@@ -18,7 +18,35 @@ class GithubApp(object):
         self.integration_id = integration_id
         self.private_key = private_key
 
-    def create_jwt(self):
+    def get_installations(self):
+        pass
+
+    # def get_installation_owner(self, installation_id):
+    #     conn = HTTPSConnection("api.github.com")
+    #     conn.request(
+    #         method="GET",
+    #         url="/lara/installations/{}".format(installation_id),
+    #         headers={
+    #             "Authorization": "Bearer {}".format(self._create_jwt().decode()),
+    #             "Accept": "application/vnd.github.machine-man-preview+json",
+    #             "User-Agent": "LaraTUB/lara"
+    #         }
+    #     )
+    #     response = conn.getresponse()
+    #     response_text = response.read().decode('utf-8')
+    #     conn.close()
+    #
+    #     if response.status == 200:
+    #         data = json.loads(response_text)
+    #         is_organization = data['target_type'] == 'Organization'
+    #         return data['account']['login'], is_organization
+    #     else:
+    #         raise GithubException(
+    #             status=response.status,
+    #             data=response_text
+    #         )
+
+    def _create_jwt(self):
         """
         Creates a signed JWT, valid for 60 seconds.
         :return:
@@ -35,32 +63,7 @@ class GithubApp(object):
             algorithm="RS256"
         )
 
-    def get_installation_owner(self, installation_id):
-        conn = HTTPSConnection("api.github.com")
-        conn.request(
-            method="GET",
-            url="/app/installations/{}".format(installation_id),
-            headers={
-                "Authorization": "Bearer {}".format(self.create_jwt().decode()),
-                "Accept": "application/vnd.github.machine-man-preview+json",
-                "User-Agent": "LaraTUB/lara"
-            }
-        )
-        response = conn.getresponse()
-        response_text = response.read().decode('utf-8')
-        conn.close()
-
-        if response.status == 200:
-            data = json.loads(response_text)
-            is_organization = data['target_type'] == 'Organization'
-            return data['account']['login'], is_organization
-        else:
-            raise GithubException(
-                status=response.status,
-                data=response_text
-            )
-
-    def get_access_token(self, installation_id):
+    def _get_installation_access_token(self, installation_id):
         """
         Get an access token for the given installation id.
         POSTs https://api.github.com/installations/<installation_id>/access_tokens
@@ -73,7 +76,7 @@ class GithubApp(object):
             method="POST",
             url="/installations/{}/access_tokens".format(installation_id),
             headers={
-                "Authorization": "Bearer {}".format(self.create_jwt().decode()),
+                "Authorization": "Bearer {}".format(self._create_jwt().decode()),
                 "Accept": "application/vnd.github.machine-man-preview+json",
                 "User-Agent": "LaraTUB/lara"
             }
@@ -91,7 +94,7 @@ class GithubApp(object):
                 headers={},  # not required, this is a NonCompletableGithubObject
                 attributes=data,
                 completed=True
-            )
+            ).token
         elif response.status == 403:
             raise GithubException.BadCredentialsException(
                 status=response.status,
