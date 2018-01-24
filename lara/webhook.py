@@ -1,14 +1,16 @@
+from flask_restful import Api, Resource
+
 from lara import app
-from clients import GithubClient
 from flask import request
 from flask import jsonify
+from .clients import GithubClient
 import json
 
 
 @app.route('/webhook', methods=['POST', 'GET'])
 def webhook():
     req = request.get_json(silent=True, force=True)
-
+    print(req)
     resp = process_request(req)
     return jsonify(resp)
 
@@ -57,3 +59,40 @@ def list_issue(issue_id):
         return [i._rawData for i in GithubClient.list_repo_issues()]
 
     return GithubClient.get_repo_issue(issue_id)._rawData
+
+
+class Issue(Resource):
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('title')
+        self.parser.add_argument('body')
+
+    def get(self, issue_id):
+        return github_client.get_repo_issue(issue_id)
+
+    def put(self, issue_id):
+        kwargs = self.parser.parse_args()
+        resp = github_client.update_repo_issue(issue_id, **kwargs)
+        return resp, 201
+
+
+class IssueList(Resource):
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('title')
+        self.parser.add_argument('body')
+
+    def get(self):
+        return github_client.list_repo_issues()
+
+    def post(self):
+        kwargs = self.parser.parse_args()
+        resp = github_client.create_repo_issue(**kwargs)
+        return resp, 201
+
+
+api = Api(app)
+api.add_resource(Issue, '/issue/<int:issue_id>')
+api.add_resource(IssueList, '/issues')
