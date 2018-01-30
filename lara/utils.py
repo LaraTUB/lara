@@ -49,10 +49,11 @@ def serializer_fields(*args, **kwargs):
         def wrapper(*arg, **kwarg):
             results = func(*arg, **kwarg)
             if isinstance(results, PaginatedList):
-                d = [_extract(args, result._rawData) for result in results]
-            else:
+                d = [_extract(args, result._rawData) for result in results if hasattr(result, "_rawData")]
+            elif hasattr(results, "_rawData"):
                 d = _extract(args, results._rawData)
-
+            else:
+                d = dict()
             return d
 
         return wrapper
@@ -62,3 +63,17 @@ def serializer_fields(*args, **kwargs):
 
 def filter_fields(**kwargs):
     pass
+
+
+
+def get_desired_parameters(*args):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*arg, **kwarg):
+            desired_kwargs = {k:v for k, v in kwarg.items()
+                              if args and k in args and kwarg.get(k, None)}
+            return func(*arg, **desired_kwargs)
+
+        return wrapper
+
+    return decorator
