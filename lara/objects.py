@@ -2,9 +2,11 @@ from github import Github
 import github.GithubException as github_exceptions
 
 from lara import app
+from lara.cache import get_cache_handler
+import trigger
 import log as logging
 import exceptions
-from utils import serializer_fields
+from utils import serializer_fields, get_desired_parameters
 
 
 git_handler = Github(app.config['GITHUB_USERNAME'],
@@ -67,6 +69,7 @@ class Repository():
         return "Repository"
 
 
+
 class Issue():
     repository = None
     last_repository_name = None
@@ -74,13 +77,12 @@ class Issue():
     # for example, use `sessionId`, `user-identifier` or `token`
     # to track different users
     body = ""
-
+    cache = get_cache_handler()
     _search_fields = ("in", "author", "assignee", "mentions",
                       "involves", "team", "state", "labels",
                       "language", "is", "merged", "closed",
                       "status", "comments",
                       "project")
-
     @classmethod
     def _get_repository(cls, **kwargs):
         # TODO: set timeout for the repository instance
@@ -94,8 +96,7 @@ class Issue():
         if not name:
             raise exceptions.RepositoryNotProvidedException()
 
-        # TODO: handle case-sensitive, assuming all the input repository
-        # name is lower-case
+        # TODO: handle case-sensitive, assuming all the input repository name is lower-case.
         # Here, sanity using the newly provided repository name, although
         # the repository maybe doesn't change
         cls.repository = _get_organization_lazily().get_repo(name)
@@ -137,6 +138,7 @@ class Issue():
         return issue.edit(state="closed")
 
 
+    # TODO: only pass desired parameters to remote
     @classmethod
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
@@ -158,13 +160,15 @@ class Issue():
         except KeyError:
             raise exceptions.IssueIdNotProvidedException()
 
-        cls.body += kwargs.pop("body", "")
+        # TODO: handle incoming requests contains comment body
+        body = kwargs.pop("body", "")
+        cls.cache.set("key", "value", trigger.issue_comment_body_not_finished_event)
+
         if not kwargs.get("finished") or kwargs["finished"].upper() != "YES":
             raise exceptions.IssueCommentNotFinishedException(id)
 
-
         if not cls.body:
-            # stay salient
+            # NOTE: keep salient
             LOG.debug("Doesn't receive any comments.")
             return
 
@@ -213,6 +217,8 @@ class Issue():
 
 
 
+# TODO: cache instance should use `userId:sessionId:object_name` as key
+# or use nested dict
 _git_object_cache = dict()
 
 def get_base_class(name):

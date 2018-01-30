@@ -49,7 +49,9 @@ def dispatch_request(name, action, **kwargs):
         followup_event = trigger.issue_comment_not_finished_event(action="{}_{}".format(name, action), **kwargs)
         return build_response(**followup_event)
     except exceptions.IssueIdNotProvidedException:
-        pass
+        LOG.error("Issue id not provided.")
+    # except:
+    #     raise exceptions.LaraException()
 
     return build_response(speech=results)
 
