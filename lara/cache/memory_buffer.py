@@ -15,7 +15,7 @@ class MemoryBuffer(BaseCache):
     def __setitem__(self, key, value):
         self._buffer_pool[key] = value
 
-    def __del__(self, key):
+    def __delitem__(self, key):
         del self._buffer_pool[key]
 
     @property

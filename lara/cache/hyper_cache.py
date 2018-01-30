@@ -38,16 +38,9 @@ class HyperCache():
     def delete(self, key):
         self._lock.acquire()
         try:
-            try:
-                self._timers[key].cancel()
-            except (TypeError, KeyError):
-                pass
-
-            try:
-                del self._buffer[key]
-                del self._timers[key]
-            except KeyError:
-                # NOTE: keep salient
-                pass
+            self._buffer.pop(key, None)
+            timer = self._timers.pop(key, None)
+            if timer:
+                timer.cancel()
         finally:
             self._lock.release()
