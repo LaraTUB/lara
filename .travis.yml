@@ -12,7 +12,7 @@ addons:
   - $STAGING_SERVER
 
 before_script:
-  - echo -e "Host $STAGING_SERVERntStrictHostKeyChecking non" >> ~/.ssh/config
+  - echo -e "Host $STAGING_SERVER\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 script:
   -
