@@ -22,9 +22,9 @@ before_deploy:
   - cat /tmp/deploy_rsa
   - 'ssh ec2-user@$STAGING_SERVER "mkdir -p test"'
 
-#deploy:
-#  - provider: script
-#    skip_cleanup: true
-#    script: 'ssh ec2-user@$STAGING_SERVER "mkdir -p test"'
-#    on:
-#      branch: travis-ci  # master
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: 'ssh ec2-user@$STAGING_SERVER "mkdir -p test"'
+    on:
+      branch: travis-ci  # master
