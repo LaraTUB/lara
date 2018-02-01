@@ -1,2 +1,6 @@
+.idea
 *.pyc
+
+config/lara.private-key.pem
 instance/config.py
+lara/flask_debug.py
