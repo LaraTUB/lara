@@ -5,17 +5,17 @@ from urllib.parse import parse_qs
 
 from github import Github
 
-from lara import app, get_db
+from app.main import application, get_db
 from flask import request, redirect, g
 
 
-@app.route('/')
+@application.route('/')
 def hello_world():
     #installation = github_app.get_installation(app.config['GITHUB_APP_ID'])
     return 'Hello, World!'
 
 
-@app.route('/auth')
+@application.route('/auth')
 def auth():
     # TODO check parameters
     # TODO factor out authentication tokens
@@ -28,7 +28,7 @@ def auth():
         state = ''.join(random.choices(string.ascii_letters + string.digits, k=30))
         db.execute('UPDATE user SET state=? WHERE token=?', (state, token))
         db.commit()
-        redirect_url = 'https://github.com/login/oauth/authorize?client_id={}&state={}'.format(app.config['GITHUB_OAUTH_CLIENT_ID'], state)
+        redirect_url = 'https://github.com/login/oauth/authorize?client_id={}&state={}'.format(application.config['GITHUB_OAUTH_CLIENT_ID'], state)
         return redirect(redirect_url, code=302)
 
     code = request.args.get('code')
@@ -42,8 +42,8 @@ def auth():
         conn.request(
             method='POST',
             url='/login/oauth/access_token?client_id={}&client_secret={}&code={}&state={}'.format(
-                app.config['GITHUB_OAUTH_CLIENT_ID'],
-                app.config['GITHUB_OAUTH_CLIENT_SECRET'],
+                application.config['GITHUB_OAUTH_CLIENT_ID'],
+                application.config['GITHUB_OAUTH_CLIENT_SECRET'],
                 code,
                 state
             ),

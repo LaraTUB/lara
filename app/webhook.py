@@ -1,6 +1,6 @@
 from flask_restful import Api, Resource
 
-from lara import app
+from app import app
 from flask import request
 from flask import jsonify
 from .clients import GithubClient
