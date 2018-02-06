@@ -11,4 +11,4 @@ rsync -rav -e ssh --exclude='.git/' \
 ssh ec2-user@$STAGING_SERVER "cd lara && \
     docker-compose down && \
     docker-compose build && \
-    docker-compose up"
+    docker-compose up -d"
