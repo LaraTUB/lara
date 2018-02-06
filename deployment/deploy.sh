@@ -1,5 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
-ssh ec2-user@$STAGING_SERVER "mkdir -p lara"
-rsync -rav -e ssh --exclude='.git/' --exclude='.travis.yml' --delete-excluded ./ ec2-user@$STAGING_SERVER:lara
-# pip install --upgrade -r requirements.txt
+echo ec2-user@$STAGING_SERVER
+
+rsync -rav -e ssh --exclude='.git/' \
+                  --exclude='.travis.yml' \
+                  --exclude='app/app/instance/config.py' \
+                  --exclude='app/app/instance/github_key.pem' \
+                  --delete ./ ec2-user@$STAGING_SERVER:lara
+
+ssh ec2-user@$STAGING_SERVER "cd lara && \
+    docker-compose down && \
+    docker-compose build && \
+    docker-compose up"
