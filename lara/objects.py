@@ -1,12 +1,12 @@
 from github import Github
-import github.GithubException as github_exceptions
-
+from github.GithubException import UnknownObjectException
 from lara import app
 from lara.cache import get_cache_handler
 import trigger
 import log as logging
 import exceptions
-from utils import serializer_fields, get_desired_parameters
+import utils
+from utils import serializer_fields, filter_fields, get_desired_parameters
 
 
 git_handler = Github(app.config['GITHUB_USERNAME'],
@@ -50,7 +50,8 @@ class Repository():
             return _get_organization_lazily().get_repos()
         try:
             return _get_organization_lazily().get_repo(name)
-        except github_exceptions.UnknownObjectException:
+        # except github_exceptions.UnknownObjectException():
+        except UnknownObjectException:
             raise exceptions.RepositoryNotFoundException(name)
 
 
@@ -62,7 +63,7 @@ class Repository():
             if key in cls._search_fields and value:
                 qualifiers[key] = value
 
-        return _get_github_handler_lazily().search_repo(query, **qualifiers)
+        return _get_github_handler_lazily().search_repositories(query, **qualifiers)
 
 
     def __repr__(self):
@@ -108,15 +109,25 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
+    @filter_fields("id", "assignee.login")
+    @get_desired_parameters("id", "repository", "state", "since", "labels")
     def list(cls, **kwargs):
+        # import ipdb; ipdb.set_trace()
         cls._get_repository(**kwargs)
+        kwargs.pop("repository", "")
         id = kwargs.pop("id", None)
-        if not id:
-            return cls.repository.get_issues()
+        state = kwargs.pop("state", "all")
+        since = kwargs.pop("since", None)
+        if state:
+            kwargs['state'] = state
+        if since:
+            kwargs['since'] = utils.make_datetime(since.split("/")[0])
 
+        if not id:
+            return cls.repository.get_issues(**kwargs)
         try:
             return cls.repository.get_issue(id)
-        except github_excpetions.UnknownObjectException:
+        except UnknownObjectException:
             raise exceptions.IssueIdNotFoundException(id)
 
 
@@ -124,6 +135,7 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
+    @get_desired_parameters("id", "repository")
     def close(cls, **kwargs):
         cls._get_repository(**kwargs)
         try:
@@ -132,7 +144,8 @@ class Issue():
             raise exceptions.IssueIdNotProvidedException()
         try:
             issue = cls.repository.get_issue(id)
-        except github_exceptions.UnknownObjectException:
+        except UnknownObjectException:
+        # except github_exceptions.UnknownObjectException():
             raise exceptions.IssueIdNotFoundException(id)
 
         return issue.edit(state="closed")
@@ -143,6 +156,7 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
+    @get_desired_parameters("repository")
     def create(cls, **kwargs):
         cls._get_repository(**kwargs)
         issue = cls.repository.create(**kwargs)
@@ -153,6 +167,7 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
+    @get_desired_parameters("id", "repository", "body", "finished")
     def comment(cls, **kwargs):
         cls._get_repository(**kwargs)
         try:
@@ -162,25 +177,34 @@ class Issue():
 
         # TODO: handle incoming requests contains comment body
         body = kwargs.pop("body", "")
-        cls.cache.set("key", "value", trigger.issue_comment_body_not_finished_event)
+        if not cls.cache.get("key"):
+            cls.cache.set("key", body, trigger.issue_comment_timeout_event)
+        else:
+            _body = cls.cache.get("key") + "\n" + body
+            cls.cache.set("key", _body, trigger.issue_comment_timeout_event)
 
+        LOG.debug("Inside cache, the comment is: %s." % cls.cache.get("key"))
         if not kwargs.get("finished") or kwargs["finished"].upper() != "YES":
             raise exceptions.IssueCommentNotFinishedException(id)
 
-        if not cls.body:
+
+        if not cls.cache.get("key"):
             # NOTE: keep salient
             LOG.debug("Doesn't receive any comments.")
             return
 
         try:
             issue = cls.repository.get_issue(id)
-        except github_exceptions.UnknownObjectException:
+        except UnknownObjectException:
+        # except github_exceptions.UnknownObjectException():
             raise exceptions.IssueIdNotFoundException(id)
 
-        issue.create_comment(body=cls.body)
-        cls.body = ""
-        return issue
+        # TODO: check whether the issue is open?
+        issue_comment = issue.create_comment(body=cls.cache.get("key"))
+        # NOTE: this value is comsumed, remove it from cache
+        cls.cache.delete("key")
 
+        return issue_comment
 
     @classmethod
     def update(cls, **kwargs):
@@ -204,16 +228,39 @@ class Issue():
     def search(cls, **kwargs):
         # TODO: before pass values into `search`
         # we should do check whether those parameters are valid or not
+
         query = kwargs.pop("query", "")
         qualifiers = dict()
-        for key, value in kwargs:
+        for key, value in kwargs.items():
             if key in cls._search_fields and value:
                 qualifiers[key] = value
-        return _get_github_handler().search_repo(query, **qualifiers)
+        query = "test"
+        # qualifiers["project"] = "LaraTUB"
+        # qualifiers["repo"] = "test"
+        # qualifiers["state"] = "open"
+
+        # import ipdb; ipdb.set_trace()
+        issues =  _get_github_handler_lazily().search_issues(query, **qualifiers)
+        return issues
+
+
+    @classmethod
+    def _get_queryset(cls, objects, **qualifiers):
+        pass
 
 
     def __repr__(self):
         return "Issue"
+
+
+
+class FilterOperation():
+    # NOTE: only support equal operation
+    @classmethod
+    def filter(cls, objects, **kwargs):
+        # if not isinstance(objects, list):
+        #     objects = [objects]
+        pass
 
 
 

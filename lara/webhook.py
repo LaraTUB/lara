@@ -20,8 +20,10 @@ LOG = logging.getLogger(__name__)
 def webhook():
     req = request.get_json(silent=True, force=True)
     LOG.debug("Request from dialogflow is: %s" % req)
-    kwargs = utils.merge_parameters(req["result"]["parameters"])
+    kwargs = utils.extract_slack_parameters(req)
+    kwargs.update(utils.merge_parameters(req["result"]["parameters"]))
 
+    print kwargs
     if req["result"]["action"]:
         name, action = req["result"]["action"].split("_")
     else:
@@ -29,13 +31,17 @@ def webhook():
 
     LOG.debug("Request for github object *%s*, play *%s* action" % (name, action))
     LOG.debug("Request parameters are %s" % kwargs)
-
     results = dispatch_request(name, action, **kwargs)
     return jsonify(results)
 
 
 def dispatch_request(name, action, **kwargs):
     action = "list" if (action == "*") else action
+    # NOTE: hard code, mapping between slack id and github account
+    # TODO: retrieve these information from database and cache
+    # it inside memory
+    if kwargs.get("assignee.login") == "U7UJ7Q3RP":
+        kwargs["assignee.login"] = "chenzongxiong"
 
     handler = getattr(get_git_object(name), action)
     try:
@@ -52,19 +58,22 @@ def dispatch_request(name, action, **kwargs):
         LOG.error("Issue id not provided.")
     # except:
     #     raise exceptions.LaraException()
-
     return build_response(speech=results)
 
 
 def build_response(**kwargs):
-    speech = kwargs.pop("speech", "")
+    speech = kwargs.pop("speech", None)
     displayText = kwargs.pop("displayText", speech)
-
-    response = dict(
-        speech=json.dumps(speech),
-        displayText=json.dumps(displayText),
-        source="Lara/lara backend"
-    )
+    if not speech:
+        response = dict(
+            source="Lara/lara backend"
+        )
+    else:
+        response = dict(
+            speech=json.dumps(speech),
+            displayText=json.dumps(displayText),
+            source="Lara/lara backend"
+        )
 
     response.update(kwargs)
     LOG.debug(response)

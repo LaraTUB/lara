@@ -29,3 +29,15 @@ class MemoryBuffer(BaseCache):
     @property
     def items(self):
         return self._buffer_pool.items()
+
+
+    def get(self, key, default=None):
+        return self._buffer_pool.get(key, default)
+
+    def pop(self, key, default=None):
+        try:
+            value = self.get(key, default)
+            del self[key]
+        except KeyError:
+            LOG.debug("Key %s not found in MemoryBuffer." % key)
+            pass

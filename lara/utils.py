@@ -1,4 +1,6 @@
 from functools import wraps
+from copy import deepcopy
+from datetime import datetime
 import log as logging
 from github.PaginatedList import PaginatedList
 import json
@@ -6,9 +8,22 @@ import json
 LOG = logging.getLogger(__name__)
 
 
-def merge_parameters(kwargs):
-    parameters = dict()
+def extract_slack_parameters(req):
+    slack = req.get("originalRequest", dict())
+    if not slack:
+        return slack
 
+    kwargs = {
+        "assignee.login": slack["data"]["event"]["user"],
+        "team_id": slack["data"]["team_id"],
+        "request_source": "slack"
+    }
+    return kwargs
+
+
+def merge_parameters(kwargs):
+
+    parameters = dict()
     for key, value in kwargs.items():
         if key.startswith("last_"):
             key = key.split("_")[-1]
@@ -46,9 +61,11 @@ def serializer_fields(*args, **kwargs):
 
     def decorator(func):
         @wraps(func)
-        def wrapper(*arg, **kwarg):
-            results = func(*arg, **kwarg)
-            if isinstance(results, PaginatedList):
+        def wrapper(*func_args, **func_kwargs):
+            results = func(*func_args, **func_kwargs)
+            if isinstance(results, (PaginatedList, list)):
+                # TODO: to retrive more pages if we cannot get expected data from
+                # the first n pages.
                 d = [_extract(args, result._rawData) for result in results if hasattr(result, "_rawData")]
             elif hasattr(results, "_rawData"):
                 d = _extract(args, results._rawData)
@@ -61,9 +78,68 @@ def serializer_fields(*args, **kwargs):
     return decorator
 
 
-def filter_fields(**kwargs):
-    pass
+def filter_fields(*args):
+    # only test supporting two-level nested key
+    def _filter(filter_kwargs, data):
+        # import ipdb; ipdb.set_trace()
+        for key, value in filter_kwargs.items():
+            # if users don't set the value for that key, pass through it without validation
 
+            key = "number" if key == "id" else key
+            # handle nested keys
+            if key.find(".") != -1:
+                ks = key.split(".")
+                _data = deepcopy(data)
+                for k in ks:
+                    if isinstance(_data, list):
+                        _data = [_d for _d in _data if getattr(_d, k)]
+                    else:
+                        _data = getattr(_data, k)
+                    if not _data:
+                        return None
+
+                if isinstance(_data, list):
+                    _data = [_d for _d in _data if _d == value]
+                    if not _data:
+                        return None
+                elif _data != value:
+                    return None
+
+            elif not getattr(data, key):
+                return None
+            elif getattr(data, key) != value:
+                return None
+
+        return data
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*func_args, **func_kwargs):
+
+            results = func(*func_args, **func_kwargs)
+            # import ipdb; ipdb.set_trace()
+
+            # NOTE: handle equal operation
+            # only compare with `int`, `str`, no `datetime`
+            filter_kwargs = {k:v for k, v in func_kwargs.items() if k in args and func_kwargs.get(k)}
+            if filter_kwargs.get('id'):
+                return results
+
+            if isinstance(results, PaginatedList):
+                d = list()
+                for result in results:
+                    dd = _filter(filter_kwargs, result)
+                    if dd:
+                        d.append(dd)
+
+            else:
+                d = _filter(filter_kwargs, results)
+
+            # to avoid NoneType
+            return d if d else None
+
+        return wrapper
+    return decorator
 
 
 def get_desired_parameters(*args):
@@ -72,8 +148,17 @@ def get_desired_parameters(*args):
         def wrapper(*arg, **kwarg):
             desired_kwargs = {k:v for k, v in kwarg.items()
                               if args and k in args and kwarg.get(k, None)}
+            if desired_kwargs.get('id') and not isinstance(desired_kwargs['id'], (int, long)):
+                desired_kwargs['id'] = int(desired_kwargs['id'])
+
             return func(*arg, **desired_kwargs)
 
         return wrapper
 
     return decorator
+
+
+
+def make_datetime(since):
+    if isinstance(since, (str, unicode)):
+        return datetime.strptime(since, "%Y-%m-%d")

@@ -33,7 +33,7 @@ class HyperCache():
             self._lock.release()
 
     def get(self, key):
-        return self._buffer[key]
+        return self._buffer.get(key, None)
 
     def delete(self, key):
         self._lock.acquire()
