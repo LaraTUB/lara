@@ -4,8 +4,8 @@ echo ec2-user@$STAGING_SERVER
 
 rsync -rav -e ssh --exclude='.git/' \
                   --exclude='.travis.yml' \
-                  --exclude='app/app/instance/config.py' \
-                  --exclude='app/app/instance/github_key.pem' \
+                  --exclude='app/instance/config.py' \
+                  --exclude='app/instance/github_key.pem' \
                   --delete ./ ec2-user@$STAGING_SERVER:lara
 
 ssh ec2-user@$STAGING_SERVER "cd lara && \
