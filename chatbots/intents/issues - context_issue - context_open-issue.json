@@ -1,0 +1,84 @@
+{
+  "id": "6c97150c-6332-48b6-b3ca-50e37fce3d3b",
+  "name": "issues - context:issue - context:open-issue",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue_open",
+      "affectedContexts": [
+        {
+          "name": "issue_open",
+          "parameters": {},
+          "lifespan": 3
+        }
+      ],
+      "parameters": [
+        {
+          "id": "3ed7dd00-4e86-4b37-870d-858e1e463b2b",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "id",
+          "value": "$id",
+          "isList": false
+        },
+        {
+          "id": "7018c18e-be28-47ca-8e24-ec858a98ec92",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "repository",
+          "value": "#issue.repository",
+          "isList": false
+        },
+        {
+          "id": "61b77b4a-9515-4a07-b4c4-102d82d2e744",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_repository",
+          "value": "#issue_list.repository",
+          "isList": false
+        },
+        {
+          "id": "0dbd57ad-4bf3-4aa7-9a90-37fad6705a53",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_id",
+          "value": "#issue_close.id",
+          "isList": false
+        },
+        {
+          "id": "062de3bc-0ce6-4f99-bbea-8b678412042c",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_1_id",
+          "value": "#issue_list.id",
+          "isList": false
+        },
+        {
+          "id": "39edf5cd-6c97-4a85-820f-c570e54eceb9",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_2_id",
+          "value": "#issue.id",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518096073,
+  "fallbackIntent": false,
+  "events": []
+}

@@ -1,0 +1,89 @@
+{
+  "id": "3e2091aa-e504-4b2b-b446-5be848977201",
+  "name": "issues - context:issue - context:close-issue",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue_close",
+      "affectedContexts": [
+        {
+          "name": "issue",
+          "parameters": {},
+          "lifespan": 2
+        },
+        {
+          "name": "issue_close",
+          "parameters": {},
+          "lifespan": 2
+        }
+      ],
+      "parameters": [
+        {
+          "id": "850fd7f0-da35-4257-b9c2-fe487e3fc3ac",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "id",
+          "value": "$id",
+          "isList": false
+        },
+        {
+          "id": "71112073-a8e5-4c41-817d-9e33b4d95504",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_id",
+          "value": "#issue_list.id",
+          "isList": false
+        },
+        {
+          "id": "37041e8d-1103-409b-bea4-4fcbba13435b",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "repository",
+          "value": "#issue.repository",
+          "isList": false
+        },
+        {
+          "id": "f2d1ffaa-a6ac-41d5-bfad-76f9147efc0b",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_repository",
+          "value": "#issue.last_repository",
+          "isList": false
+        },
+        {
+          "id": "7b16ee0b-f6aa-448f-93fd-a637329b84ae",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_1_id",
+          "value": "#issue.id",
+          "isList": false
+        },
+        {
+          "id": "12b76c3b-a562-4dc7-be1d-4e39ef9b9382",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_2_id",
+          "value": "#issue_open.id",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": "your last issue id is $last_id"
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518096097,
+  "fallbackIntent": false,
+  "events": []
+}

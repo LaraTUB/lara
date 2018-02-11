@@ -1,0 +1,26 @@
+[
+  {
+    "value": "issue_list",
+    "synonyms": [
+      "issue_list"
+    ]
+  },
+  {
+    "value": "issue_comment",
+    "synonyms": [
+      "issue_comment"
+    ]
+  },
+  {
+    "value": "issue_create",
+    "synonyms": [
+      "issue_create"
+    ]
+  },
+  {
+    "value": "issue_close",
+    "synonyms": [
+      "issue_close"
+    ]
+  }
+]

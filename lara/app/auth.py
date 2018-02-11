@@ -1,18 +1,21 @@
 import sqlite3
 import random
 import string
-from flask import Flask, g
+from flask import g
 from http.client import HTTPSConnection
 from urllib.parse import parse_qs
 from github import Github
 from flask import request, redirect
+from lara import application
+from lara import log as logging
+from lara.app.GithubApp import GithubApp
 
-from .GithubApp import GithubApp
+LOG = logging.getLogger(__name__)
 
-
-application = Flask(__name__, instance_relative_config=True)
-application.config.from_pyfile('config.py')
-
+@application.route('/')
+def hello_world():
+    # installation = github_app.get_installation(application.config['GITHUB_APP_ID'])
+    return 'Hello, World!'
 
 # Connect to the Lara GithubApp
 with open(application.config['GITHUB_APP_PRIVATE_KEY'], 'r') as f:
@@ -33,12 +36,6 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
-
-
-@application.route('/')
-def hello_world():
-    # installation = github_app.get_installation(app.config['GITHUB_APP_ID'])
-    return 'Hello, World!'
 
 
 @application.route('/auth')

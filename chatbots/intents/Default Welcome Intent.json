@@ -6,10 +6,19 @@
   "responses": [
     {
       "resetContexts": false,
-      "action": "input.welcome",
+      "action": "",
       "affectedContexts": [],
       "parameters": [],
       "messages": [
+        {
+          "type": 0,
+          "platform": "slack",
+          "lang": "en",
+          "speech": [
+            "hello to slack",
+            "test welcome to slack"
+          ]
+        },
         {
           "type": 0,
           "lang": "en",
@@ -21,7 +30,9 @@
           ]
         }
       ],
-      "defaultResponsePlatforms": {},
+      "defaultResponsePlatforms": {
+        "slack": true
+      },
       "speech": []
     }
   ],
@@ -32,7 +43,13 @@
   "fallbackIntent": false,
   "events": [
     {
+      "name": "SLACK_WELCOME"
+    },
+    {
       "name": "WELCOME"
+    },
+    {
+      "name": "GOOGLE_ASSISTANT_WELCOME"
     }
   ]
 }

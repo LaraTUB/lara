@@ -1,0 +1,42 @@
+{
+  "id": "40aa8d61-d220-4fef-9c3e-267a2fca52c9",
+  "name": "trigger:asking_issue_id",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "",
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "16802331-9d5d-4fd1-ac6c-5ad6a63ac918",
+          "required": false,
+          "dataType": "@issue-actions",
+          "name": "action",
+          "value": "#asking_issue_id_event.action",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": "What\u0027s your issue id?"
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518095354,
+  "fallbackIntent": false,
+  "events": [
+    {
+      "name": "asking_issue_id_event"
+    }
+  ]
+}

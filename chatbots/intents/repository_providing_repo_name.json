@@ -1,0 +1,69 @@
+{
+  "id": "c0b10597-5c75-428b-8854-b1861cc6553f",
+  "name": "repository:providing_repo_name",
+  "auto": true,
+  "contexts": [
+    "providing_repo_name"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "",
+      "affectedContexts": [
+        {
+          "name": "issue_list",
+          "parameters": {},
+          "lifespan": 1
+        },
+        {
+          "name": "issue",
+          "parameters": {},
+          "lifespan": 1
+        }
+      ],
+      "parameters": [
+        {
+          "id": "d2896651-394f-4819-87b6-45ed8ce0da21",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "repository",
+          "value": "$repository",
+          "isList": false
+        },
+        {
+          "id": "d11b99e9-b567-4b50-9917-ffbebb6bb920",
+          "required": false,
+          "dataType": "@issue-actions",
+          "name": "last_action",
+          "value": "#providing_repo_name.action",
+          "isList": false
+        },
+        {
+          "id": "ed0bbf9c-8fb7-4cbb-b2f2-38c4c0536a35",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_id",
+          "value": "#issue_list.id",
+          "isList": false
+        },
+        {
+          "id": "08c9b1ec-535a-4a8f-bed8-e244ee7b059f",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_1_id",
+          "value": "#issue.id",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518104666,
+  "fallbackIntent": false,
+  "events": []
+}

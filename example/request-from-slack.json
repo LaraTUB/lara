@@ -1,0 +1,67 @@
+{
+    "lang": "en",
+    "status": {
+        "code": 200,
+        "errorType": "success",
+        "webhookTimedOut": false
+    },
+    "timestamp": "2018-01-30T15:40:44.22Z",
+    "sessionId": "5b706c48-4c97-4b63-97bd-ba0af5a82888",
+    "result": {
+        "source": "agent",
+        "score": 1,
+        "speech": "",
+        "fulfillment": {
+            "speech": "",
+            "messages": []
+        },
+        "parameters": {
+            "last_repository": "",
+            "repository": ""
+        },
+        "contexts": [
+            {
+                "name": "issue",
+                "parameters": {
+                    "last_repository": "",
+                    "last_repository.original": "",
+                    "repository.original": "",
+                    "repository": ""
+                },
+                "lifespan": 5
+            }
+        ],
+        "resolvedQuery": "list all issues",
+        "metadata": {
+            "intentId": "0a23e70e-5595-4451-92dc-384aedf45bb1",
+            "webhookForSlotFillingUsed": "false",
+            "intentName": "issues",
+            "webhookUsed": "true"
+        },
+        "action": "issue_list",
+        "actionIncomplete": false
+    },
+    "id": "c040c4ca-1e02-44d2-9e1e-876cba66f78c",
+    "originalRequest": {
+        "source": "slack",
+        "data": {
+            "token": "gDveymIE9ExEpkRysryVwtqr",
+            "api_app_id": "A8Q56P41X",
+            "event_time": 1517326843,
+            "event_id": "Ev9095B3UY",
+            "type": "event_callback",
+            "authed_users": [
+                "U8RV2ALF5"
+            ],
+            "team_id": "T7T7DSRLJ",
+            "event": {
+                "event_ts": "1517326843.000794",
+                "text": "<@U8RV2ALF5> list all issues",
+                "ts": "1517326843.000794",
+                "user": "U7UJ7Q3RP",
+                "type": "message",
+                "channel": "D8STQ98A2"
+            }
+        }
+    }
+}

@@ -5,7 +5,7 @@
   "googleAssistant": {
     "googleAssistantCompatible": false,
     "project": "newagent-a9ed0",
-    "welcomeIntentSignInRequired": false,
+    "welcomeIntentSignInRequired": true,
     "startIntents": [],
     "systemIntents": [],
     "endIntentIds": [],
@@ -19,7 +19,7 @@
   },
   "defaultTimezone": "Europe/Madrid",
   "webhook": {
-    "url": "http://ec2-54-89-208-229.compute-1.amazonaws.com/webhook",
+    "url": "http://5a1f7721.ngrok.io/webhook",
     "headers": {
       "Authorization": "Bearer f7519c4778924531a543a0fd874619c3",
       "": ""

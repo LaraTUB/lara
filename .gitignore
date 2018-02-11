@@ -1,7 +1,9 @@
 .idea
 *.pyc
-
+*/*/__pycache__
+instance/github_key.pem
+instance/config.py
+lara.db
 app/instance/github_key.pem
 app/instance/config.py
-
 app/app/flask_debug.py

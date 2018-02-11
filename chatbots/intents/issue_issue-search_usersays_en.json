@@ -1,0 +1,402 @@
+[
+  {
+    "id": "76cc8559-d6ce-4a1a-bcbe-b0772ec82f6b",
+    "data": [
+      {
+        "text": "list issues which are ",
+        "userDefined": false
+      },
+      {
+        "text": "bug",
+        "alias": "labels",
+        "meta": "@issue-labels",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "197de4aa-e14a-4562-8b23-471f6f4a04b9",
+    "data": [
+      {
+        "text": "list issues labeled by ",
+        "userDefined": false
+      },
+      {
+        "text": "duplicate",
+        "alias": "labels",
+        "meta": "@issue-labels",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "c2130c5f-1194-4fdf-a790-26eb1227ea61",
+    "data": [
+      {
+        "text": "list",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " all issues labeled by ",
+        "userDefined": false
+      },
+      {
+        "text": "b",
+        "alias": "labels",
+        "meta": "@issue-labels",
+        "userDefined": true
+      },
+      {
+        "text": " in ",
+        "userDefined": false
+      },
+      {
+        "text": "repository",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "4d625851-3cbc-4e92-a1a1-1a024ab2193c",
+    "data": [
+      {
+        "text": "list issues labeled by ",
+        "userDefined": false
+      },
+      {
+        "text": "bug",
+        "alias": "labels",
+        "meta": "@issue-labels",
+        "userDefined": true
+      },
+      {
+        "text": " in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "lara",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "1fdf7032-bb01-4c78-ad96-d70f2f264c79",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "lara",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "today",
+        "alias": "since",
+        "meta": "@sys.date-time",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "960927f2-648a-4039-8d83-15b5b73a093a",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues regarding repository ",
+        "userDefined": false
+      },
+      {
+        "text": "lara",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "yesterday",
+        "alias": "since",
+        "meta": "@sys.date-time",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "0a2ed4b4-7c0b-46e1-8ba4-72123e33f4d4",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "python",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "10 days ago",
+        "alias": "since",
+        "meta": "@sys.date-time",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "1bffb884-b88f-4a66-9eaa-7d621590c7f1",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "closed",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues regarding in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      },
+      {
+        "text": "  ",
+        "userDefined": false
+      },
+      {
+        "text": "2 days ago",
+        "alias": "since",
+        "meta": "@sys.date-time",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "6546b9f0-53e0-4ec9-b1b7-dad0fdba3d02",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      },
+      {
+        "text": " since ",
+        "userDefined": false
+      },
+      {
+        "text": "2018-2-3",
+        "alias": "since",
+        "meta": "@sys.date-time",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "ec1bcc31-fcd4-4507-9655-99c9c54147c0",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "lara",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "4bb2de56-07ab-4735-ad96-09b21b8b52b6",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues regarding in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      },
+      {
+        "text": " from ",
+        "userDefined": false
+      },
+      {
+        "text": "last 4 weeks",
+        "alias": "since",
+        "meta": "@sys.date-time",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  },
+  {
+    "id": "af62baeb-6bb7-4e2b-9d15-4ab4cc8b13bf",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "closed",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues regarding in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      },
+      {
+        "text": " from ",
+        "userDefined": false
+      },
+      {
+        "text": "last 2 weeks",
+        "alias": "since",
+        "meta": "@sys.date-time",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518107298
+  }
+]

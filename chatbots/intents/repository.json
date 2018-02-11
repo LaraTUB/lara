@@ -1,0 +1,23 @@
+{
+  "id": "e7b43b16-ce37-4a55-ba3a-55aecb0b8345",
+  "name": "repository",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "repository_list",
+      "affectedContexts": [],
+      "parameters": [],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1517058451,
+  "fallbackIntent": false,
+  "events": []
+}

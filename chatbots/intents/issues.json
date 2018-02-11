@@ -6,21 +6,39 @@
   "responses": [
     {
       "resetContexts": false,
-      "action": "issue",
+      "action": "issue_list",
       "affectedContexts": [
         {
-          "name": "issues",
+          "name": "issue",
           "parameters": {},
-          "lifespan": 2
+          "lifespan": 3
         }
       ],
       "parameters": [
         {
-          "id": "ad00b402-050e-4dcd-93f7-71dbde0c2dd1",
+          "id": "b6c96fc6-925d-46ce-bace-f0c46f01d35b",
           "required": false,
-          "dataType": "@issue-list",
-          "name": "issue-list",
-          "value": "$issue-list",
+          "dataType": "@repository-name",
+          "name": "last_repository",
+          "value": "#providing_repo_name.repository",
+          "isList": false
+        },
+        {
+          "id": "159f1424-3c01-4073-9ff3-99122694af63",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "repository",
+          "value": "$repository",
+          "isList": false
+        },
+        {
+          "id": "d6628e53-7c72-4d08-bfce-4def6bad14a4",
+          "required": false,
+          "dataType": "@issue-state",
+          "name": "state",
+          "value": "$state",
+          "prompts": [],
+          "defaultValue": "open",
           "isList": false
         }
       ],
@@ -32,7 +50,7 @@
   "priority": 500000,
   "webhookUsed": true,
   "webhookForSlotFilling": false,
-  "lastUpdate": 1515486225,
+  "lastUpdate": 1518091533,
   "fallbackIntent": false,
   "events": []
 }

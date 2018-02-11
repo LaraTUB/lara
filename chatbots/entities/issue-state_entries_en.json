@@ -1,0 +1,15 @@
+[
+  {
+    "value": "closed",
+    "synonyms": [
+      "close",
+      "closed"
+    ]
+  },
+  {
+    "value": "open",
+    "synonyms": [
+      "open"
+    ]
+  }
+]

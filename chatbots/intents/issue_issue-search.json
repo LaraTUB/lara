@@ -1,0 +1,99 @@
+{
+  "id": "b0615bad-feef-4a8c-822f-5e3591b1ac46",
+  "name": "issue:issue-search",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue_list",
+      "affectedContexts": [
+        {
+          "name": "issue",
+          "parameters": {},
+          "lifespan": 1
+        },
+        {
+          "name": "issue_list",
+          "parameters": {},
+          "lifespan": 1
+        }
+      ],
+      "parameters": [
+        {
+          "id": "d0c0010f-e07e-4d7e-a68f-2472f54b8d2d",
+          "required": false,
+          "dataType": "@sys.any",
+          "name": "query",
+          "value": "$query",
+          "isList": false
+        },
+        {
+          "id": "baeab7c2-0dc8-4661-b4bb-efa1b1cdcdbf",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "repository",
+          "value": "$repository",
+          "isList": false
+        },
+        {
+          "id": "5bbf7c3c-1e55-446f-9695-8266a8baa259",
+          "required": false,
+          "dataType": "@issue-state",
+          "name": "state",
+          "value": "$state",
+          "isList": false
+        },
+        {
+          "id": "0643502d-0acf-4ba1-8683-523eea77faa6",
+          "required": false,
+          "dataType": "@sys.date-time",
+          "name": "since",
+          "value": "$since",
+          "isList": false
+        },
+        {
+          "id": "da72e79e-4d5b-4835-b479-348f2d635ab3",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_0_repository",
+          "value": "#providing_repo_name.repository",
+          "isList": false
+        },
+        {
+          "id": "64e2f41d-c930-4aa3-a731-8e173634022c",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_1_repostiory",
+          "value": "#issue.repository",
+          "isList": false
+        },
+        {
+          "id": "0b5b7388-e0d8-49c8-aa9d-2f783c2dc662",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_2_repository",
+          "value": "#issue.last_repository",
+          "isList": false
+        },
+        {
+          "id": "d2ae0682-bd71-4210-82f1-0c72e73a332e",
+          "required": false,
+          "dataType": "@issue-labels",
+          "name": "labels",
+          "value": "$labels",
+          "isList": true
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518107298,
+  "fallbackIntent": false,
+  "events": []
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "cea8286f-bd53-4bc3-96e0-456c188d9cf1",
+    "data": [
+      {
+        "text": "Good day",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "e1ea74af-c60f-4ece-a91b-bd551f48f49b",
+    "data": [
+      {
+        "text": "Hello",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "4bd24b27-1991-4896-b56a-62db57825894",
+    "data": [
+      {
+        "text": "Hi",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  }
+]
