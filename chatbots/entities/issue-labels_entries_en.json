@@ -1,0 +1,45 @@
+[
+  {
+    "value": "bug",
+    "synonyms": [
+      "bug",
+      "bugs"
+    ]
+  },
+  {
+    "value": "duplicate",
+    "synonyms": [
+      "duplicate"
+    ]
+  },
+  {
+    "value": "question",
+    "synonyms": [
+      "question"
+    ]
+  },
+  {
+    "value": "invalid",
+    "synonyms": [
+      "invalid"
+    ]
+  },
+  {
+    "value": "help wanted",
+    "synonyms": [
+      "help wanted"
+    ]
+  },
+  {
+    "value": "enhancement",
+    "synonyms": [
+      "enhancement"
+    ]
+  },
+  {
+    "value": "b",
+    "synonyms": [
+      "b"
+    ]
+  }
+]

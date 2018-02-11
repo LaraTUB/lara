@@ -1,0 +1,92 @@
+{
+  "id": "b7dbdd71-27df-4930-8162-4dada7f81e8d",
+  "name": "issues - context:issue - context:comment-issue",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue_comment",
+      "affectedContexts": [
+        {
+          "name": "issue",
+          "parameters": {},
+          "lifespan": 3
+        },
+        {
+          "name": "issue_comment",
+          "parameters": {},
+          "lifespan": 1
+        }
+      ],
+      "parameters": [
+        {
+          "id": "69f5ddfc-2a45-4ef0-995c-0da4a039c29d",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "id",
+          "value": "$id",
+          "isList": false
+        },
+        {
+          "id": "53a6dcb2-5904-4fec-a8cd-b4054eb515b7",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_repository",
+          "value": "#issue.repository",
+          "isList": false
+        },
+        {
+          "id": "9ab1c47b-7f70-441c-8566-e0cba32898b2",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_1_repository",
+          "value": "#providing_repo_name.repository",
+          "isList": false
+        },
+        {
+          "id": "0b70d894-3174-4090-99f6-cdbf77721b55",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "repository",
+          "value": "$repository",
+          "isList": false
+        },
+        {
+          "id": "7495ebc5-6c0c-4653-9eaf-9eab5b78a08b",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_0_id",
+          "value": "#issue_list.id",
+          "isList": false
+        },
+        {
+          "id": "60d72c30-b1fe-450c-a498-9e057e1a9de4",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_1_id",
+          "value": "#issue.id",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": [
+            "Go ahead, I start to record your comments.",
+            "I\u0027m recording, go ahead."
+          ]
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518101783,
+  "fallbackIntent": false,
+  "events": []
+}

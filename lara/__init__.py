@@ -1,15 +1,15 @@
 from flask import Flask
 
-app = Flask(__name__, instance_relative_config=True)
+application = Flask(__name__, instance_relative_config=True)
 
-app.config.from_object('config.default')
-app.config.from_pyfile('config.py')
+application.config.from_object('config.default')
+application.config.from_pyfile('config.py')
 
 try:
-    app.config.from_envvar('APP_CONFIG_FILE')
+    application.config.from_envvar('APP_CONFIG_FILE')
 except RuntimeError:
     pass
 
 
-import rest
-import webhook
+from lara import webhook
+from lara.app import auth

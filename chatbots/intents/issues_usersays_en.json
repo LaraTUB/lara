@@ -1,17 +1,365 @@
 [
   {
-    "id": "068d91a8-19fe-45ca-a6c8-3e298ad82f75",
+    "id": "44cdb5eb-a460-415b-9efa-a59244be85a9",
     "data": [
       {
-        "text": "show me issues",
+        "text": "list",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues for me",
         "userDefined": false
       }
     ],
     "isTemplate": false,
-    "count": 0
+    "count": 0,
+    "updated": 1518091533
   },
   {
-    "id": "9b42ecb4-12ce-46b6-9191-3a64131abc14",
+    "id": "99d16e19-1e5f-49e9-931a-4dcca2acf770",
+    "data": [
+      {
+        "text": "show",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "closed",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": false
+      },
+      {
+        "text": " issues for me",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "96adc657-5432-4859-96f2-7cea27950dd3",
+    "data": [
+      {
+        "text": "show",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "closed",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": false
+      },
+      {
+        "text": " issues",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "0747009d-9fe4-4245-b715-5ffb504c69de",
+    "data": [
+      {
+        "text": "list",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "e52f44e7-b192-4d37-ac50-fa58d55a7d46",
+    "data": [
+      {
+        "text": "show ",
+        "userDefined": false
+      },
+      {
+        "text": "closed",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues in ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "1e59ef5c-deb8-442d-a128-25decddacf4c",
+    "data": [
+      {
+        "text": "list ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues in ",
+        "userDefined": false
+      },
+      {
+        "text": "lara",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "31ae319a-1a93-4a60-8bf5-9b61d556e67e",
+    "data": [
+      {
+        "text": "list all ",
+        "userDefined": false
+      },
+      {
+        "text": "closed",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues in ",
+        "userDefined": false
+      },
+      {
+        "text": "minidbs",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "2c8aec5a-278e-4ac8-a00c-eb224d9f772b",
+    "data": [
+      {
+        "text": "list",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " all ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "9d2fa9fa-f135-45ab-b7a7-9875c961baad",
+    "data": [
+      {
+        "text": "list",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " all ",
+        "userDefined": false
+      },
+      {
+        "text": "open",
+        "alias": "state",
+        "meta": "@issue-state",
+        "userDefined": true
+      },
+      {
+        "text": " issues in ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "e39f4739-4863-4e3a-8a12-f9f40d384964",
+    "data": [
+      {
+        "text": "list all issues in ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 1,
+    "updated": 1518091533
+  },
+  {
+    "id": "c4dcc601-6f23-47a0-977c-47782838be82",
+    "data": [
+      {
+        "text": "all issues in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "mini-dbs",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "0d6c5f42-c1b5-4a1e-b11c-018b59e47a6b",
+    "data": [
+      {
+        "text": "show me issues in repo ",
+        "userDefined": false
+      },
+      {
+        "text": "test",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "84d098b0-193c-4719-8271-be09a1d8efdb",
+    "data": [
+      {
+        "text": "list all issues in repository ",
+        "userDefined": false
+      },
+      {
+        "text": "opencv",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "22e5794a-1cf4-4977-a23f-f98545c2bfd2",
+    "data": [
+      {
+        "text": "show me issues in ",
+        "userDefined": false
+      },
+      {
+        "text": "lara",
+        "alias": "repository",
+        "meta": "@repository-name",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "2db4a770-e4d6-4f94-a17e-b3ceb205312c",
+    "data": [
+      {
+        "text": "show",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      },
+      {
+        "text": " me issues",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518091533
+  },
+  {
+    "id": "a2849567-25d9-4a73-a1ec-6eb484832b47",
     "data": [
       {
         "text": "all issues, please",
@@ -19,15 +367,15 @@
       }
     ],
     "isTemplate": false,
-    "count": 0
+    "count": 0,
+    "updated": 1518091533
   },
   {
-    "id": "c5553ade-4205-4af1-a4d7-9b2bf6c5954f",
+    "id": "12b716ac-187d-47ed-b6c4-d77284333deb",
     "data": [
       {
         "text": "list",
-        "alias": "issue-list",
-        "meta": "@issue-list",
+        "meta": "@sys.ignore",
         "userDefined": false
       },
       {
@@ -36,10 +384,11 @@
       }
     ],
     "isTemplate": false,
-    "count": 0
+    "count": 0,
+    "updated": 1518091533
   },
   {
-    "id": "4eacfd6a-1b38-40b3-b264-4aa660cdaf95",
+    "id": "29819f4f-51a7-4782-b53e-d7e4f57f9164",
     "data": [
       {
         "text": "issues?",
@@ -48,10 +397,10 @@
     ],
     "isTemplate": false,
     "count": 0,
-    "updated": 1515486225
+    "updated": 1518091533
   },
   {
-    "id": "719df187-f39b-4ed2-b884-3ebddb36adf2",
+    "id": "681d5a19-46f9-4074-9b3c-b503ca517d44",
     "data": [
       {
         "text": "issues for me?",
@@ -60,10 +409,10 @@
     ],
     "isTemplate": false,
     "count": 0,
-    "updated": 1515486225
+    "updated": 1518091533
   },
   {
-    "id": "79f57569-fcce-4ef2-a1f2-180ecd2845bd",
+    "id": "ba2f7acb-81d6-4145-928a-0b9841d26aec",
     "data": [
       {
         "text": "Any issue?",
@@ -72,10 +421,10 @@
     ],
     "isTemplate": false,
     "count": 0,
-    "updated": 1515486225
+    "updated": 1518091533
   },
   {
-    "id": "e02071e8-e6d5-4374-ac15-854e87a46184",
+    "id": "28d3adce-f380-494e-95cd-0190e858bcd9",
     "data": [
       {
         "text": "Any new issue?",
@@ -84,6 +433,6 @@
     ],
     "isTemplate": false,
     "count": 0,
-    "updated": 1515486225
+    "updated": 1518091533
   }
 ]

@@ -1,0 +1,40 @@
+{
+  "id": "7d717cf6-a3cc-41fe-9eee-f0bcacc19e38",
+  "parentId": "589641f7-1d3c-4f90-93d1-becd8b60bc4a",
+  "rootParentId": "589641f7-1d3c-4f90-93d1-becd8b60bc4a",
+  "name": "trigger:asking-repository-name - repeat",
+  "auto": true,
+  "contexts": [
+    "providing_repo_name",
+    "triggerasking-repository-name-followup"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "triggerasking-repository-name.triggerasking-repository-name-repeat",
+      "affectedContexts": [
+        {
+          "name": "triggerasking-repository-name-repeat-followup",
+          "parameters": {},
+          "lifespan": 2
+        }
+      ],
+      "parameters": [],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1508189124810,
+  "fallbackIntent": false,
+  "events": []
+}

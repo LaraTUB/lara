@@ -1,25 +1,19 @@
 {
   "id": "854082b6-f75c-4e40-9f5a-56ae0479a4b5",
-  "name": "New Issue Intent",
+  "name": "Issue:issue-create",
   "auto": true,
   "contexts": [],
   "responses": [
     {
       "resetContexts": false,
-      "action": "issue.create",
-      "affectedContexts": [
-        {
-          "name": "issues",
-          "parameters": {},
-          "lifespan": 5
-        }
-      ],
+      "action": "issue_create",
+      "affectedContexts": [],
       "parameters": [
         {
           "id": "9ba8b19c-f945-4d2b-9b0f-54430d7dc5b1",
           "required": true,
           "dataType": "@sys.any",
-          "name": "issue-title",
+          "name": "title",
           "value": "$issue-title",
           "prompts": [
             {
@@ -37,7 +31,7 @@
           "id": "0b65a7b1-357d-4857-a804-2f4d69052463",
           "required": true,
           "dataType": "@sys.any",
-          "name": "issue-body",
+          "name": "body",
           "value": "$issue-body",
           "prompts": [
             {
@@ -53,10 +47,10 @@
         },
         {
           "id": "582c3d36-0e64-4be5-b3c7-c57fcc4439f2",
-          "required": false,
+          "required": true,
           "dataType": "@sys.any",
-          "name": "issue-assignee",
-          "value": "",
+          "name": "assignee",
+          "value": "$issue-assignee",
           "prompts": [
             {
               "lang": "en",
@@ -70,10 +64,24 @@
           "isList": false
         },
         {
-          "id": "d71f5aa1-b911-4fbf-8015-e57178223170",
-          "dataType": "@issue-create",
-          "name": "issue-create",
-          "value": "$issue-create"
+          "id": "19107d9d-a779-4972-941c-9b0bc710f5d6",
+          "required": true,
+          "dataType": "@issue-labels",
+          "name": "labels",
+          "value": "$issue-label",
+          "prompts": [
+            {
+              "lang": "en",
+              "value": "What\u0027s your issue label, bug, question, duplicate, invalid, wontfix?"
+            }
+          ],
+          "isList": true
+        },
+        {
+          "id": "f8b3880f-ab5b-4093-b598-9fa0e5e22f56",
+          "dataType": "@repository-name",
+          "name": "last_repository",
+          "value": "#providing_repo_name.repository"
         }
       ],
       "messages": [],
@@ -84,7 +92,7 @@
   "priority": 500000,
   "webhookUsed": true,
   "webhookForSlotFilling": false,
-  "lastUpdate": 1515500255,
+  "lastUpdate": 1518100610,
   "fallbackIntent": false,
   "events": []
 }

@@ -1,0 +1,48 @@
+{
+  "id": "97b66ae0-a27d-44c1-b0af-f778e68a423b",
+  "name": "repository:current-working-repository",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [
+        {
+          "name": "issue_list",
+          "parameters": {},
+          "lifespan": 3
+        },
+        {
+          "name": "issue",
+          "parameters": {},
+          "lifespan": 3
+        }
+      ],
+      "parameters": [
+        {
+          "id": "cf5c1ed2-8b3a-4359-bc6f-0ce4a688ccd7",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_repository",
+          "value": "#providing_repo_name.repository",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": "Currently, your working repository is $last_repository."
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518090612,
+  "fallbackIntent": false,
+  "events": []
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "value": "yes",
+    "synonyms": [
+      "yes",
+      "sure",
+      "go ahead",
+      "of course"
+    ]
+  },
+  {
+    "value": "no",
+    "synonyms": [
+      "no",
+      "of course not",
+      "I\u0027m afraid not"
+    ]
+  }
+]

@@ -1,0 +1,100 @@
+{
+  "id": "fc660f3a-368c-47a8-9722-00b9ea41dca0",
+  "name": "issues - context:comment-issue - context:comment-issue",
+  "auto": true,
+  "contexts": [
+    "issue_comment"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "issue_comment",
+      "affectedContexts": [
+        {
+          "name": "issue",
+          "parameters": {},
+          "lifespan": 3
+        },
+        {
+          "name": "issue_list",
+          "parameters": {},
+          "lifespan": 1
+        },
+        {
+          "name": "issue_open",
+          "parameters": {},
+          "lifespan": 1
+        },
+        {
+          "name": "issue_close",
+          "parameters": {},
+          "lifespan": 1
+        }
+      ],
+      "parameters": [
+        {
+          "id": "a3496938-118e-41f2-b34a-11d545b17acb",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "last_id",
+          "value": "#issue_comment.last_id",
+          "isList": false
+        },
+        {
+          "id": "21f58437-d3c8-48f8-b507-cbc3e919a99a",
+          "required": false,
+          "dataType": "@stop-words",
+          "name": "finished",
+          "value": "$finished",
+          "isList": false
+        },
+        {
+          "id": "accc4f12-828f-4628-ab29-1710e7be3a33",
+          "required": false,
+          "dataType": "@sys.number-integer",
+          "name": "id",
+          "value": "#issue_comment.id",
+          "isList": false
+        },
+        {
+          "id": "948da6c3-ef9f-4304-af88-8b91b18ec911",
+          "required": false,
+          "dataType": "@repository-name",
+          "name": "last_repository",
+          "value": "#issue.repository",
+          "isList": false
+        },
+        {
+          "id": "6be18cf5-12f4-4840-bd59-4ef158a292f4",
+          "required": false,
+          "dataType": "@sys.any",
+          "name": "body",
+          "value": "$body",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": [
+            "Anything more?",
+            "Is that all?"
+          ]
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 250000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518102832,
+  "fallbackIntent": false,
+  "events": [
+    {
+      "name": "issue_comment_not_finished_event"
+    }
+  ]
+}

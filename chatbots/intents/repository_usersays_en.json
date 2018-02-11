@@ -1,0 +1,84 @@
+[
+  {
+    "id": "b3558a24-e131-4a84-a620-eca132251079",
+    "data": [
+      {
+        "text": "show my repos",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "e4add5a2-af0c-4825-8b9f-86623956cc58",
+    "data": [
+      {
+        "text": "show me ",
+        "userDefined": false
+      },
+      {
+        "text": "repositories",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "1112f600-f5af-4fac-87fe-651397d8e46e",
+    "data": [
+      {
+        "text": "Do you know my ",
+        "userDefined": false
+      },
+      {
+        "text": "repositories",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "1826e483-d9c5-4b59-b0a8-4ee5ed34f82b",
+    "data": [
+      {
+        "text": "list",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": " my ",
+        "userDefined": false
+      },
+      {
+        "text": "repositories",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1517058451
+  },
+  {
+    "id": "c6c0f279-55f2-4a4e-b10a-bfa40f18075a",
+    "data": [
+      {
+        "text": "What are my ",
+        "userDefined": false
+      },
+      {
+        "text": "repositories",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1517058451
+  }
+]

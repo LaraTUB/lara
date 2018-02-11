@@ -1,0 +1,51 @@
+{
+  "id": "589641f7-1d3c-4f90-93d1-becd8b60bc4a",
+  "name": "trigger:asking-repository-name",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "",
+      "affectedContexts": [
+        {
+          "name": "providing_repo_name",
+          "parameters": {},
+          "lifespan": 3
+        }
+      ],
+      "parameters": [
+        {
+          "id": "919a030a-e5ba-4a1e-b150-0fdfcf0f0f8c",
+          "required": false,
+          "dataType": "@issue-actions",
+          "name": "action",
+          "value": "#repository_missing_event.action",
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": [
+            "What\u0027s your repository?",
+            "Which repository?"
+          ]
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1518093969,
+  "fallbackIntent": false,
+  "events": [
+    {
+      "name": "repository_missing_event"
+    }
+  ]
+}

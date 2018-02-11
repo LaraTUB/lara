@@ -1,0 +1,80 @@
+[
+  {
+    "value": "@repository:repo  is @repository:repository",
+    "synonyms": [
+      "@repository:repo  is @repository:repository"
+    ]
+  },
+  {
+    "value": "My @repository:repo is @repository:repository",
+    "synonyms": [
+      "My @repository:repo is @repository:repository"
+    ]
+  },
+  {
+    "value": "It\u0027s @repository:repository",
+    "synonyms": [
+      "It\u0027s @repository:repository"
+    ]
+  },
+  {
+    "value": "Its name is @repository:repository",
+    "synonyms": [
+      "Its name is @repository:repository"
+    ]
+  },
+  {
+    "value": "mini-dbs",
+    "synonyms": [
+      "mini-dbs"
+    ]
+  },
+  {
+    "value": ".emacs.d",
+    "synonyms": [
+      ".emacs.d"
+    ]
+  },
+  {
+    "value": "flask",
+    "synonyms": [
+      "flask"
+    ]
+  },
+  {
+    "value": "opencv",
+    "synonyms": [
+      "opencv"
+    ]
+  },
+  {
+    "value": "Lara",
+    "synonyms": [
+      "Lara"
+    ]
+  },
+  {
+    "value": "Test",
+    "synonyms": [
+      "Test"
+    ]
+  },
+  {
+    "value": "python",
+    "synonyms": [
+      "python"
+    ]
+  },
+  {
+    "value": "laraTUB",
+    "synonyms": [
+      "laraTUB"
+    ]
+  },
+  {
+    "value": "minidbs",
+    "synonyms": [
+      "minidbs"
+    ]
+  }
+]

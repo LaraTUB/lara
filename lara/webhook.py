@@ -1,139 +1,79 @@
-from lara import app
-from clients import GithubClient
+import json
+from github.PaginatedList import PaginatedList
+
 from flask import request
 from flask import jsonify
-import json
+
+from lara import application
+from lara import exceptions
+from lara import log as logging
+from lara import trigger
+from lara import utils
+from lara.objects import get_git_object
+
+LOG = logging.getLogger(__name__)
 
 
-user = GithubClient.get_user()
-__login__ = user.login
-
-@app.route('/webhook', methods=['POST', 'GET'])
+@application.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
+    LOG.debug("Request from dialogflow is: %s" % req)
+    kwargs = utils.extract_slack_parameters(req)
+    kwargs.update(utils.merge_parameters(req))
+    if kwargs.get("assignee.login"):
+        kwargs['session_id'] = "{}:{}".format(kwargs.get("assignee.login"), kwargs['session_id'])
 
-    resp = process_request(req)
-    return jsonify(resp)
+    if req["result"]["action"]:
+        name, action = req["result"]["action"].split("_")
+    else:
+        name, action = kwargs.pop("action", "").split("_")
 
-
-def process_request(req):
-    speech = "default speech for debug"
-    display_text = None
-    # import pdb; pdb.set_trace()
-    print(req)
-    req_action = req.get('result').get('action')
-    print(req_action)
-    issue_parameters = req.get('result').get('parameters')
-    print(issue_parameters)
-
-    if req_action == 'issue':
-        speech, display_text = stat_issue()
-
-    if req_action == 'issue.list':
-        try:
-            issue_id = int(issue_parameters.get('issue-id'))
-        except (ValueError, TypeError):
-            issue_id = None
-        if issue_parameters.get('issue-parameters') == 'true':
-            issue_id = -1
-
-        speech, display_text = list_issue(issue_id)
-
-    if req_action == 'issue.update':
-        try:
-            issue_id = int(issue_parameters.get('issue-id'))
-        except (ValueError, TypeError):
-            issue_id = None
-
-        speech, display_text = close_issue(issue_id)
-    if req_action == 'issue.create':
-        title = issue_parameters.get('issue-title')
-        body = issue_parameters.get('issue-body')
-        assignee = issue_parameters.get('issue-assignee')
-        speech, display_text = create_issue(title, body, assignee)
-
-    return build_response(speech, display_text)
+    LOG.debug("Request for github object *%s*, play *%s* action" % (name, action))
+    LOG.debug("Request parameters are %s" % kwargs)
+    results = dispatch_request(name, action, **kwargs)
+    return jsonify(results)
 
 
-def build_response(speech, display_text=None):
-    if not display_text:
-        display_text = speech
+def dispatch_request(name, action, **kwargs):
+    action = "list" if (action == "*") else action
+    # NOTE: hard code, mapping between slack id and github account
+    # TODO: retrieve these information from database and cache
+    # it inside memory
+    if kwargs.get("assignee.login") == "U7UJ7Q3RP":
+        kwargs["assignee.login"] = "chenzongxiong"
 
-    return {"speech": json.dumps(speech),
-            "displayText": json.dumps(display_text),
-            "source": "chatbot-backend"}
-
-
-"""
-Extract meaningful issue content from raw data
-Parameters
-----------
-issue: `object`, an issue instance
-
-Return
-----------
-d: `dict`, a dictionary contain the value we are interested
-"""
-def _extract(issue):
-    raw_data = issue._rawData
-    KEYS = ['title', 'body', 'assignee', 'created_at', 'closed_at',
-            'number', 'assignees']
-    d = {}
-    for key, value in raw_data.iteritems():
-        if key not in KEYS:
-            continue
-
-        if key == "assignee" and value is not None:
-            d[key] = value['login']
-        if key == 'assignees':
-            d[key] = [assignee['login'] for assignee in value]
-        d[key] = value
-
-    return d
+    handler = getattr(get_git_object(name), action)
+    try:
+        results = handler(**kwargs)
+    except exceptions.RepositoryNotProvidedException:
+        LOG.debug("Trigger Repository Missing Event.")
+        followup_event = trigger.repository_missing_event(action="{}_{}".format(name, action), **kwargs)
+        return build_response(**followup_event)
+    except exceptions.IssueCommentNotFinishedException:
+        LOG.debug("Trigger Issue Comemnt Not Finished Event.")
+        followup_event = trigger.issue_comment_not_finished_event(action="{}_{}".format(name, action), **kwargs)
+        return build_response(**followup_event)
+    except exceptions.IssueIdNotProvidedException:
+        LOG.error("Issue id not provided.")
+    # except:
+    #     raise exceptions.LaraException()
+    return build_response(speech=results)
 
 
-"""
-List the status of issues
-Parameters
-----------
+def build_response(**kwargs):
+    speech = kwargs.pop("speech", None)
+    displayText = kwargs.pop("displayText", speech)
+    if not speech:
+        response = dict(
+            source="Lara/lara backend"
+        )
+    else:
+        response = dict(
+            speech=json.dumps(speech),
+            displayText=json.dumps(displayText),
+            source="Lara/lara backend"
+        )
 
-Returns
-----------
-speech: the context play via audio
-display_text: the context diplay on the screen
-"""
-def stat_issue():
-    display_text = [_extract(issue) for issue in GithubClient.list_repo_issues()]
-    count = len(display_text)
-    print display_text
-    return "There are {} issues are for you. Can I list them on the screen".format(count), display_text
-
-def close_issue(issue_id):
-    # import pdb; pdb.set_trace()
-    issue = GithubClient.get_repo_issue(issue_id)
-    issue.edit(issue.title, issue.body,
-               state='closed')
-
-    print(issue._rawData)
-    return "Close issue " + issue.title, _extract(issue)
-
-
-def list_issue(issue_id):
-    if not issue_id:
-        return "Not Found issue, sorry", None
-    if issue_id == -1:
-        # list all issues
-        _, display_text = stat_issue()
-        return display_text, display_text
-
-    issue = GithubClient.get_repo_issue(issue_id)
-    user = GithubClient.get_user()
-    print user.login
-    print issue._rawData
-    return "List issue " + issue.title, _extract(issue)
-
-
-def create_issue(title, body, assignee=None):
-    issue = GithubClient.create_repo_issue(title, body)
-    print issue._rawData
-    return "Create sucessfully!", _extract(issue)
+    response.update(kwargs)
+    LOG.debug(response)
+    return response

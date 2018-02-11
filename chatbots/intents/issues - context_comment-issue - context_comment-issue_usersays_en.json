@@ -1,0 +1,48 @@
+[
+  {
+    "id": "343f97a7-82fe-476c-93e7-94f4e0cc2ac0",
+    "data": [
+      {
+        "text": "whatever users say, just record them",
+        "alias": "body",
+        "meta": "@sys.any",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518102832
+  },
+  {
+    "id": "af3175e4-63ab-4598-b33c-1fba9f95b301",
+    "data": [
+      {
+        "text": "Ok, ",
+        "userDefined": false
+      },
+      {
+        "text": "that\u0027s all",
+        "alias": "finished",
+        "meta": "@stop-words",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518102832
+  },
+  {
+    "id": "788848fe-7ba3-4e2e-b0b5-192c2c497be3",
+    "data": [
+      {
+        "text": "That\u0027s all",
+        "alias": "finished",
+        "meta": "@stop-words",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1518102832
+  }
+]
