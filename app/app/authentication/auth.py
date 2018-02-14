@@ -61,3 +61,16 @@ def auth():
         return "Successfully connected Slack user id {} with Github user {}".format(rows[0][3], user.login)
     else:
         raise Exception('Bad state', status_code=400)
+
+
+def build_authentication_message(slack_user_id):
+    """Generates and stores a random token and returns a Github authorization URL"""
+    token = _get_random_string()
+    db = get_db()
+    db.execute('INSERT INTO user (slack_user_id, token) VALUES (?, ?)', (slack_user_id, token))
+    db.commit()
+    return '{}/auth?token={}'.format(application.config['URL'], token)
+
+
+def _get_random_string(length=30):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))

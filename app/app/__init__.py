@@ -7,12 +7,16 @@ from app.authentication.GithubApp import GithubApp
 application = Flask(__name__, instance_relative_config=True)
 application.config.from_pyfile('config.py')
 
-# ------ Do we need this? ------ #
-try:
-    application.config.from_envvar('APP_CONFIG_FILE')
-except RuntimeError:
-    pass
-# ------------------------------ #
+# Create db if not exists
+with sqlite3.connect(application.config['DATABASE']) as conn:
+    cursor = conn.cursor()
+    try:
+        cursor.execute('SELECT * FROM user')
+        print("Database table user has {} rows".format(len(cursor.fetchall())))
+    except sqlite3.OperationalError:
+        with open('resources/schema.sql', 'r') as f:
+            cursor.execute(f.read())
+            conn.commit()
 
 
 # Database connection
@@ -42,5 +46,5 @@ def hello_world():
     return 'Hello, World!'
 
 
-# from app import webhook  # noqa
+from app import webhook  # noqa
 from app.authentication import auth  # noqa
