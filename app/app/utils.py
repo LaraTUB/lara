@@ -4,7 +4,7 @@ from functools import wraps
 from copy import deepcopy
 from datetime import datetime
 from github.PaginatedList import PaginatedList
-from lara import log as logging
+from app import log as logging
 
 LOG = logging.getLogger(__name__)
 

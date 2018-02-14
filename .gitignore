@@ -2,8 +2,6 @@
 *.pyc
 */*/__pycache__
 
-instance/github_key.pem
-instance/config.py
-lara.db
+app/instance/*
 
-lara/flask_debug.py
+app/app/flask_debug.py

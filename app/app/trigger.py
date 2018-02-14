@@ -1,6 +1,5 @@
-import json
-from lara import log as logging
-from lara.conversation import speech as Speech
+from app import log as logging
+from app.conversation import speech
 
 LOG = logging.getLogger(__name__)
 
@@ -11,7 +10,7 @@ def repository_missing_event(**kwargs):
             "name": "repository_missing_event",
             "data": kwargs
         },
-        speech=Speech.repository_missing()
+        speech=speech.repository_missing()
     )
     return followup_event
 

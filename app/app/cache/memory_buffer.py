@@ -1,6 +1,6 @@
-from lara import log as logging
-from lara import exceptions
-from lara.cache.base import BaseCache
+from app import log as logging
+from app import exceptions
+from app.cache.base import BaseCache
 
 LOG = logging.getLogger(__name__)
 

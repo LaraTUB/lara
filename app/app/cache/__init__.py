@@ -1,11 +1,10 @@
 import importlib
 
-from lara import application
-from lara.cache import hyper_cache
-
+from app import application
+from app.cache import hyper_cache
 
 cache_driver_name = application.config.get("CACHE_DRIVER",
-                                   "lara.cache.memory_buffer.MemoryBuffer")
+                                   "app.cache.memory_buffer.MemoryBuffer")
 
 def _load_class(name=cache_driver_name):
     ind = name.rfind(".")

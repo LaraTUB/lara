@@ -1,6 +1,6 @@
 import threading
-from lara import application
-from lara import log as logging
+from app import application
+from app import log as logging
 
 LOG = logging.getLogger(__name__)
 

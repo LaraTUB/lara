@@ -1,4 +1,4 @@
-from lara import log as logging
+from app import log as logging
 
 LOG = logging.getLogger(__name__)
 

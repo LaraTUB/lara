@@ -1,15 +1,14 @@
 import json
-from github.PaginatedList import PaginatedList
 
-from flask import request
 from flask import jsonify
+from flask import request
 
-from lara import application
-from lara import exceptions
-from lara import log as logging
-from lara import trigger
-from lara import utils
-from lara.objects import get_git_object
+from app import application
+from app import exceptions
+from app import log as logging
+from app import trigger
+from app import utils
+from app.objects import get_git_object
 
 LOG = logging.getLogger(__name__)
 

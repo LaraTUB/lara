@@ -1,13 +1,13 @@
 from github import Github
 from github.GithubException import UnknownObjectException
-from lara import application
-from lara import trigger
-from lara import log as logging
-from lara import exceptions
-from lara import utils
-from lara.cache import get_cache_handler
-from lara.utils import serializer_fields, filter_fields, get_desired_parameters
 
+from app import application
+from app import exceptions
+from app import log as logging
+from app import trigger
+from app import utils
+from app.cache import get_cache_handler
+from app.utils import serializer_fields, filter_fields, get_desired_parameters
 
 LOG = logging.getLogger(__name__)
 

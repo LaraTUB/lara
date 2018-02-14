@@ -1,7 +1,7 @@
 import logging
 import inspect
 import os
-from lara import application
+from app import application
 
 
 def _get_binary_name():
