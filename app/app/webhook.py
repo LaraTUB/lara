@@ -43,28 +43,28 @@ def webhook():
             LOG.debug("Request by " + kwargs["assignee.login"])
         elif len(row) == 0:
             LOG.debug("User unknown, asking for authentication with token xxx")
-            return respond("Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
+            return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
         else:
             LOG.error("Weird database state!")
             raise exceptions.LaraException()
 
     kwargs["assignee.login"] = github_login
-
-    if req["result"]["action"]:
-        try:
+    try:
+        if req["result"]["action"]:
             name, action = req["result"]["action"].split("_")
-            LOG.debug("Request for github object *%s*, play *%s* action" % (name, action))
-            LOG.debug("Request parameters are %s" % kwargs)
-            handler = getattr(get_git_object(name), action)
-        except ValueError:
-            # TODO implement
-            action = req["result"]["action"]
-            def handler():
-                return "Basic result"
-    # else:
-    #     name, action = kwargs.pop("action", "").split("_")
+        else:
+            name, action = kwargs.pop("action", "").split("_")
+        LOG.debug("Request for github object *%s*, play *%s* action" % (name, action))
+        LOG.debug("Request parameters are %s" % kwargs)
+        handler = getattr(get_git_object(name), action)
+    except ValueError:
+        # TODO implement handler for more general commands like "ListAllIssues"
+        action = req["result"]["action"]
+        def handler():
+            return "Basic result"
 
     try:
+        # TODO way to pass
         results = handler(**kwargs)
     except exceptions.RepositoryNotProvidedException:
         LOG.debug("Trigger Repository Missing Event.")
@@ -79,22 +79,25 @@ def webhook():
     except:
         raise exceptions.LaraException()
 
-    return respond(json.dumps(results))
+    return respond(speech=json.dumps(results))
 
 
-def respond(response):
+def respond(**kwargs):
     """Responds to dialogflow"""
-    if not response:
+    speech = kwargs.pop("speech", None)
+    displayText = kwargs.pop("displayText", speech)
+    if not speech:
         response = dict(
             source="Lara/lara backend"
         )
     else:
         # "speech" is the spoken version of the response, "displayText" is the visual version
         response = dict(
-            speech=response,
-            displayText=response,
+            speech=speech,
+            displayText=displayText,
             source="Lara/lara backend"
         )
 
+    response.update(kwargs)
     LOG.debug(response)
     return jsonify(response)

@@ -55,7 +55,8 @@ def auth():
         gh = Github(access_token)
         user = gh.get_user()
 
-        db.execute('UPDATE user SET github_name=?, github_login=? WHERE state=?', (user.name, user.login, state))
+        db.execute('UPDATE user SET github_name=?, github_login=?, github_token=? WHERE state=?',
+                   (user.name, user.login, access_token, state))
         db.commit()
 
         return "Successfully connected Slack user id {} with Github user {}".format(rows[0][3], user.login)

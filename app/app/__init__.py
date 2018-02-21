@@ -1,6 +1,7 @@
 import sqlite3
 
 from flask import Flask, g
+from github import Github
 
 from app.authentication.GithubApp import GithubApp
 
@@ -27,6 +28,13 @@ def get_db():
     return db
 
 
+def get_gh(github_login):
+    db = get_db()
+    github_token = db.execute('SELECT github_token FROM user WHERE github_login=?', (github_login,))[0]
+    return Github(github_token)
+
+
+
 @application.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
@@ -43,7 +51,9 @@ github_app = GithubApp(application.config['GITHUB_APP_ID'], private_key)
 
 @application.route('/')
 def hello_world():
-    return 'Hello, World!'
+    db = get_db()
+    rows = db.execute('SELECT github_login, slack_user_id FROM user').fetchall()
+    return '<br>'.join([' '.join(row) for row in rows])
 
 
 from app import webhook  # noqa
