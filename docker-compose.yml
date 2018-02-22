@@ -3,6 +3,6 @@ services:
   web:
     build: .
     volumes:
-      - ./app/instance/lara.db:/app/instance/lara.db
+      - ./app/instance:/app/instance
     ports:
       - '80:80'

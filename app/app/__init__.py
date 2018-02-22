@@ -30,9 +30,8 @@ def get_db():
 
 def get_gh(github_login):
     db = get_db()
-    github_token = db.execute('SELECT github_token FROM user WHERE github_login=?', (github_login,))[0]
+    github_token = db.execute('SELECT github_token FROM user WHERE github_login=?', (github_login,)).fetchall()[0][0]
     return Github(github_token)
-
 
 
 @application.teardown_appcontext
@@ -53,7 +52,7 @@ github_app = GithubApp(application.config['GITHUB_APP_ID'], private_key)
 def hello_world():
     db = get_db()
     rows = db.execute('SELECT github_login, slack_user_id FROM user').fetchall()
-    return '<br>'.join([' '.join(row) for row in rows])
+    return 'List of users:<br>' + '<br>'.join([' '.join(row) for row in rows])
 
 
 from app import webhook  # noqa
