@@ -1,0 +1,31 @@
+The following criteria are to be used to prioritize issues:
+
+- label
+   - critical
+   - bug
+   - help wanted
+- assigned
+   - me?
+   - noone?
+   - somoneone else?
+- created by?
+   - me?
+   - contributer?
+   - oganization owner?
+- time?
+- Milestone? Then check due date
+
+# Pull Requets
+- time (older = more important)
+- assigned to me?
+- issued by?
+   - contributer?
+
+At the moment the prioritization functions as follows:
+
+- label
+   - critical 100
+   - bug 10
+   - help wanted 50
+
+The issue-scoring script currently does twofold: It rates issues based on a scoring system, gives an overview of assigned issues (with warning if issues are unassigned) and then can return a list of issues sorted by the rating of the scoring system.
