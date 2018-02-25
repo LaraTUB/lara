@@ -1,0 +1,28 @@
+@startuml
+participant User
+participant Dialogflow
+participant Backend
+participant Github
+User -> Dialogflow: "List all issues assigned to me"
+
+activate Dialogflow
+Dialogflow -> Backend: {action:"list_issues"}
+activate Backend
+Backend --> Dialogflow: Error: Unknown repository
+destroy Backend
+Dialogflow --> User: "From which repository?"
+deactivate Dialogflow
+
+User -> Dialogflow: "from Lara"
+activate Dialogflow
+Dialogflow -> Backend: {action:"missing_repository"\ncontext:"list_issues"}
+activate Backend
+Backend -> Github: GET .../issues
+activate Github
+Github --> Backend: ["issue1", "issue2"]
+deactivate Github
+Backend --> Dialogflow: ["issue1", "issue2"]
+deactivate Backend
+Dialogflow --> User: "There are currently two issues\nassigned to you: Issue 1 and Issue 2"
+deactivate Dialogflow
+@enduml
