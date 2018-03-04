@@ -59,6 +59,23 @@ issues_and_pulls = issues_user + all_pulls
 
 sorted_issues_and_pulls = sorted(issues_and_pulls, key=create_score, reverse=True)
 
+search_paginated = github.search_repositories("org:airbnb topic:lambda")
+search = []
+for search_page in search_paginated:
+	search.append(search_page)
+
+contribs_for_tag = dict()
+for repo in search:
+	for contrib in repo.get_stats_contributors():
+		author_login = contrib.author.login
+		if author_login in contribs_for_tag.keys():
+			contribs_for_tag[author_login] += contrib.total
+		else:
+			contribs_for_tag[author_login] = contrib.total
+
+for contrib in sorted(contribs_for_tag, key=contribs_for_tag.get, reverse=True):
+	print contrib, contribs_for_tag[contrib]
+
 print(user.login)
 print("----------------")
 print("----------------")
