@@ -5,3 +5,5 @@
 app/instance/*
 
 app/app/flask_debug.py
+
+feature_prototypes/config.py

@@ -1,3 +1,4 @@
+import config
 from github import Github
 from github import Issue
 from github import PullRequest
@@ -43,7 +44,7 @@ def create_score(poi):
 	else:
 		return 0
 
-github = Github("f988fe6e41161df94fc2b50261ce4e8e32393cc1")
+github = Github(config.github_oauth)
 test = github.get_organization("LaraTUB").get_repo("test")
 user = github.get_user("alexheinrich")
 all_issues = test.get_issues()
