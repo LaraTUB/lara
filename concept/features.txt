@@ -1,0 +1,69 @@
+|------------------|
+| LIST OF FEATURES |
+|------------------|
+
+# RULES
+1. _No_ requests without server fulfilment -> _Every_ request is authenticated or leads to the authentication request answer
+
+# LEGEND
+User U
+Lara L
+
+# BASICS
+U: <Anything from unknown client>
+L: Please authenticate with Github: <URL>
+
+U: Hi
+L: Hi <Github clear name | Github user name>
+
+U: What's my organization?
+L: <Organization>
+
+
+# ISSUES
+The user can either set the working repository by hand:
+U: Set working repository to <repo>
+L: You are now working on repository <repo>
+
+Or if user queries and repo is unknown, Lara will intercept:
+L: What repository are you working on?
+U: <repo>
+L: <answer to original question>
+
+## GET
+U: How many issues are assigned to me [in total]?
+L: There are <n> issues (in <m> different repositories | in repository <x>) assigned to you.
+
+U: Are there any new bugs?  // Context? Me?
+L: There are <n> issues with the label "bug" that were created in the last 3 days
+
+IF n<5:
+    L: Do you want me to read them out?
+    U: Yes
+    L: <read titles>
+    read on at 'CLOSE' and/or 'COMMENT'
+
+## CREATE
+U: Create an issue with the title '<issue title>' and assign it to <me | user>
+L: Issue created
+
+## CLOSE
+U: Close the second issue
+
+## COMMENT
+U: Write a comment saying: 'We do not support Browsers older than one year'
+
+
+# DAY PLAN
+U: What do I have to do today?
+L: The most important taks for today are: <list 3 tasks>
+    / L: There is nothing to do for you
+
+U: What should I do next?
+L: You could <suggestion>
+
+
+# HELP
+U: Who can help me with <technology> in <repository>?
+L: There are <n> people in your organization that worked with <technology> in <repo language> repositories lately: <list of names>.
+// to be continued

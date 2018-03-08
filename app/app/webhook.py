@@ -30,8 +30,8 @@ def webhook():
         kwargs['session_id'] = "{}:{}".format(kwargs.get("assignee.login"), kwargs['session_id'])
 
     # Authenticate
-    if "originalRequest" not in req:  # Only for debugging
-        github_login = "chenzongxiong"
+    if "originalRequest" not in req:
+        return respond(speech="Only requests via Slack supported")
     else:
         original_request = req["originalRequest"]
         if original_request["source"] != "slack":

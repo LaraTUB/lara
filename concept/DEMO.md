@@ -40,3 +40,8 @@ This demo shows how Lara can semantically search through git histories and ident
 > L: There are two people in your organization that worked with Docker in Python repositories lately: "Max Mustermann" and "John Doe".
 >
 > U: Great! ...
+
+Data sources for matching
+- Github Topics
+- Github Languages
+- Own logic (e.g. files in git, README.md text)
