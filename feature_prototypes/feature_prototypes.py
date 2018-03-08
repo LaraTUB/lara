@@ -60,14 +60,39 @@ issues_and_pulls = issues_user + all_pulls
 
 sorted_issues_and_pulls = sorted(issues_and_pulls, key=create_score, reverse=True)
 
-search_paginated = github.search_repositories("org:airbnb topic:lambda")
-search = []
+organization = "airbnb"
+#topic_or_lang = raw_input("Please enter a topic or language: ")
+topic_or_lang = "Java"
+
+query = "org:" + organization + " topic:" + topic_or_lang
+print(query)
+search_paginated = github.search_repositories(query)
+search_topic = []
 for search_page in search_paginated:
-	search.append(search_page)
+	print(search_page)
+	search_topic.append(search_page)
+print("---")
+query = "org:" + organization + " language:" + topic_or_lang
+print(query)
+search_paginated = github.search_repositories(query)
+search_lang = []
+for search_page in search_paginated:
+	print(search_page)
+	search_lang.append(search_page)
+print("---")
+
+print("---")
+print("diff")
+search = list(set(search_topic + search_lang))
+print(search)
+print("---")
 
 contribs_for_tag = dict()
 for repo in search:
-	for contrib in repo.get_stats_contributors():
+	stats = repo.get_stats_contributors()
+	print(repo)
+	#print(stats)
+	for contrib in stats:
 		author_login = contrib.author.login
 		if author_login in contribs_for_tag.keys():
 			contribs_for_tag[author_login] += contrib.total
