@@ -9,35 +9,6 @@ from app import log as logging
 LOG = logging.getLogger(__name__)
 
 
-def extract_slack_parameters(req):
-    slack = req.get("originalRequest", dict())
-    if not slack:
-        return slack
-
-    kwargs = {
-        "assignee.login": slack["data"]["event"]["user"],
-        "team_id": slack["data"]["team_id"],
-        "request_source": "slack"
-    }
-
-    return kwargs
-
-
-def merge_parameters(req):
-    kwargs = req["result"]["parameters"]
-    parameters = dict()
-    for key, value in kwargs.items():
-        if key.startswith("last_"):
-            key = key.split("_")[-1]
-            if not parameters.get(key):
-                parameters[key] = value
-        else:
-            parameters[key] = value
-
-    parameters['session_id'] = req['sessionId']
-    return parameters
-
-
 def serializer_fields(*args, **kwargs):
 
     def _extract(provided_keys, data):

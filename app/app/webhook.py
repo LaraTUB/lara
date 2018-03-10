@@ -3,7 +3,7 @@ import json
 from flask import jsonify
 from flask import request
 
-from app import application, get_db
+from app import application, get_db, get_gh
 from app import exceptions
 from app import log as logging
 from app import trigger
@@ -17,51 +17,77 @@ LOG = logging.getLogger(__name__)
 @application.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
-    LOG.debug("Request from dialogflow is: %s" % req)
+    LOG.debug("Request from dialogflow: %s" % req)
 
-    # TODO Refactor
-    kwargs = utils.extract_slack_parameters(req)
+    # Authenticate
+    if "originalRequest" not in req or req["originalRequest"]["source"] != "slack":
+        return respond(speech="Only requests via Slack supported")
+
+    original_request = req["originalRequest"]
+
+    kwargs = {
+        "assignee.login": original_request["data"]["event"]["user"],
+        "team_id": original_request["data"]["team_id"],
+        "request_source": "slack"
+    }
+
+    def merge_parameters(req):
+        kwargs = req["result"]["parameters"]
+        parameters = dict()
+        for key, value in kwargs.items():
+            if key.startswith("last_"):
+                key = key.split("_")[-1]
+                if not parameters.get(key):
+                    parameters[key] = value
+            else:
+                parameters[key] = value
+
+        parameters['session_id'] = req['sessionId']
+        return parameters
+
     kwargs.update(utils.merge_parameters(req))
+
+
 
     # Why do we need to do this?
     if kwargs.get("assignee.login"):
         kwargs['session_id'] = "{}:{}".format(kwargs.get("assignee.login"), kwargs['session_id'])
 
-    # Authenticate
-    if "originalRequest" not in req:
-        return respond(speech="Only requests via Slack supported")
-    else:
-        original_request = req["originalRequest"]
-        if original_request["source"] != "slack":
-            LOG.error("Only Slack supported")
-            raise exceptions.LaraException()
-        slack_user_id = original_request["data"]["event"]["user"]
-        db = get_db()
-        row = db.execute('SELECT github_login FROM user WHERE slack_user_id=?', (slack_user_id,)).fetchall()
-        if len(row) == 1:
-            github_login = row[0][0]
-            LOG.debug("Request by " + kwargs["assignee.login"])
-        elif len(row) == 0:
-            LOG.debug("User unknown, asking for authentication with token xxx")
-            return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
-        else:
-            LOG.error("Weird database state!")
-            raise exceptions.LaraException()
+######################################################
 
+    slack_user_id = original_request["data"]["event"]["user"]
+    db = get_db()
+    row = db.execute('SELECT github_login FROM user WHERE slack_user_id=?', (slack_user_id,)).fetchall()
+    if len(row) == 1:
+        github_login = row[0][0]
+        LOG.debug("Request by " + github_login)
+    elif len(row) == 0:
+        LOG.debug("User unknown, asking for authentication with token xxx")
+        return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
+    else:
+        LOG.error("Weird database state!")
+        raise exceptions.LaraException()
+
+    # NEW
+    action = req["result"]["action"]
+    if action == 'hello':
+        gh = get_gh(github_login)
+        first_name = gh.get_user().name.split(' ')[0]
+        return respond(speech="Hi " + first_name)
+
+    # OLD
     kwargs["assignee.login"] = github_login
     try:
-        if req["result"]["action"]:
-            name, action = req["result"]["action"].split("_")
+        if action:
+            name, action = action.split("_")
         else:
             name, action = kwargs.pop("action", "").split("_")
         LOG.debug("Request for github object *%s*, play *%s* action" % (name, action))
         LOG.debug("Request parameters are %s" % kwargs)
         handler = getattr(get_git_object(name), action)
     except ValueError:
-        # TODO implement handler for more general commands like "ListAllIssues"
-        action = req["result"]["action"]
-        def handler():
-            return "Basic result"
+        LOG.error("Unknown action")
+        return respond(speech="Unknown action")
 
     try:
         # TODO way to pass
