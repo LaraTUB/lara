@@ -10,6 +10,8 @@ from app import trigger
 from app import utils
 from app.authentication import auth
 from app.objects import get_git_object
+from app.db import api as dbapi
+
 
 LOG = logging.getLogger(__name__)
 
@@ -36,17 +38,14 @@ def webhook():
             LOG.error("Only Slack supported")
             raise exceptions.LaraException()
         slack_user_id = original_request["data"]["event"]["user"]
-        db = get_db()
-        row = db.execute('SELECT github_login FROM user WHERE slack_user_id=?', (slack_user_id,)).fetchall()
-        if len(row) == 1:
-            github_login = row[0][0]
-            LOG.debug("Request by " + kwargs["assignee.login"])
-        elif len(row) == 0:
+
+        user = dbapi.user_get_by__slack_user_id(slack_user_id)
+        if not user.github_login:
             LOG.debug("User unknown, asking for authentication with token xxx")
             return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
         else:
-            LOG.error("Weird database state!")
-            raise exceptions.LaraException()
+            github_login = user.github_login
+            LOG.debug("Request by " + kwargs["assignee.login"])
 
     kwargs["assignee.login"] = github_login
     try:
@@ -56,7 +55,9 @@ def webhook():
             name, action = kwargs.pop("action", "").split("_")
         LOG.debug("Request for github object *%s*, play *%s* action" % (name, action))
         LOG.debug("Request parameters are %s" % kwargs)
-        handler = getattr(get_git_object(name), action)
+        # NOTE: each user has a git object handler.
+        handler = getattr(get_git_object("{}:{}".format(github_login, name)),
+                          action)
     except ValueError:
         # TODO implement handler for more general commands like "ListAllIssues"
         action = req["result"]["action"]

@@ -3,5 +3,7 @@
 */*/__pycache__
 
 app/instance/*
+!app/instance/config.py.example
+!app/instance/default.py
 
 app/app/flask_debug.py

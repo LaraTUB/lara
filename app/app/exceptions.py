@@ -61,3 +61,11 @@ class IssueAssigneeNotProvidedException(LaraException):
 
 class IssueLabelNotProvidedException(LaraException):
     msg_fmt = "Issue label is not provided."
+
+
+class UserNotFoundByGithubLogin(LaraException):
+    msg_fmt = "User %(github_login) not found."
+
+
+class UserNotFoundBySlackUserId(LaraException):
+    msg_fmt = "User %(slack_user_id) not found."

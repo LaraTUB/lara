@@ -6,6 +6,7 @@ from github import Github
 from app.authentication.GithubApp import GithubApp
 
 application = Flask(__name__, instance_relative_config=True)
+application.config.from_pyfile('default.py', silent=True)
 application.config.from_pyfile('config.py')
 
 # Create db if not exists

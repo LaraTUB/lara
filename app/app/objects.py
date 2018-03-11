@@ -1,6 +1,7 @@
 from github import Github
 from github.GithubException import UnknownObjectException
 
+import app
 from app import application
 from app import exceptions
 from app import log as logging
@@ -8,29 +9,29 @@ from app import trigger
 from app import utils
 from app.cache import get_cache_handler
 from app.utils import serializer_fields, filter_fields, get_desired_parameters
+from app.db import api as dbapi
 
 LOG = logging.getLogger(__name__)
 
 GIT_HANDLER = None
 ORGANIZATION = None
 
-def _get_github_handler_lazily():
-    global GIT_HANDLER
 
-    # TODO: use token instead of private login information
+def _get_github_handler_lazily(github_login):
+    global GIT_HANDLER
     if not GIT_HANDLER:
-        GIT_HANDLER = Github(application.config['GITHUB_USERNAME'],
-                             application.config['GITHUB_PASSWORD'])
+        user = dbapi.user_get_by__github_login(github_login)
+        GIT_HANDLER = Github(user.github_token)
 
     return GIT_HANDLER
 
 
-def _get_organization_lazily():
+def _get_organization_lazily(github_login):
     global ORGANIZATION
 
     # NOTE: oragnization name should be provided by the incoming request
     if ORGANIZATION is None:
-        ORGANIZATION = _get_github_handler_lazily().get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
+        ORGANIZATION = _get_github_handler_lazily(github_login).get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
 
     return ORGANIZATION
 
@@ -99,7 +100,8 @@ class Issue():
         # TODO: handle case-sensitive, assuming all the input repository name is lower-case.
         # Here, sanity using the newly provided repository name, although
         # the repository maybe doesn't change
-        cls.repository = _get_organization_lazily().get_repo(name)
+        github_login = kwargs.pop("assignee.login")
+        cls.repository = _get_organization_lazily(github_login).get_repo(name)
         cls.last_repository_name = name
         return cls.repository
 
@@ -110,8 +112,9 @@ class Issue():
                        "labels.name")
     @filter_fields("id", "assignee.login")
     @get_desired_parameters("id", "repository", "state", "since", "labels",
-                            "session_id")
+                            "session_id", "assignee.login")
     def list(cls, **kwargs):
+        # TODO: `github_login` has no right to access issues
         session_id = kwargs.pop("session_id")
         if not session_id:
             raise exceptions.ServerExceptions()
@@ -132,6 +135,7 @@ class Issue():
 
         cls._get_repository(**kwargs)
         kwargs.pop("repository", "")
+        kwargs.pop("assignee.login", "")
         if not id:
             labels = kwargs.pop("labels", None)
             issues = cls.repository.get_issues(**kwargs)
@@ -152,7 +156,7 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
-    @get_desired_parameters("id", "repository")
+    @get_desired_parameters("id", "repository", "assignee.login")
     def close(cls, **kwargs):
         cls._get_repository(**kwargs)
         kwargs.pop("repository", "")
@@ -173,7 +177,7 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
-    @get_desired_parameters("id", "repository")
+    @get_desired_parameters("id", "repository", "assignee.login")
     def open(cls, **kwargs):
         cls._get_repository(**kwargs)
         kwargs.pop("repository", "")
@@ -195,7 +199,7 @@ class Issue():
                        "labels.name")
     @get_desired_parameters("repository", "title", "body",
                             "assignee", "labels",
-                            "session_id")
+                            "session_id", "assignee.login")
     def create(cls, **kwargs):
         cached_kwargs = cls._new_issue_cache.get(kwargs.get("session_id")) or dict()
 
@@ -226,7 +230,8 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
-    @get_desired_parameters("id", "repository", "body", "finished", "session_id")
+    @get_desired_parameters("id", "repository", "body", "finished", "session_id",
+                            "assignee.login")
     def comment(cls, **kwargs):
         cls._get_repository(**kwargs)
         try:
@@ -268,28 +273,6 @@ class Issue():
 
 
     @classmethod
-    @serializer_fields("id", "state", "number", "title",
-                       "body", "comments", "user.login",
-                       "labels.name")
-    def search(cls, **kwargs):
-        # TODO: before pass values into `search`
-        # we should do check whether those parameters are valid or not
-
-        query = kwargs.pop("query", "")
-        qualifiers = dict()
-        for key, value in kwargs.items():
-            if key in cls._search_fields and value:
-                qualifiers[key] = value
-        query = "test"
-        # qualifiers["project"] = "LaraTUB"
-        # qualifiers["repo"] = "test"
-        # qualifiers["state"] = "open"
-
-        issues =  _get_github_handler_lazily().search_issues(query, **qualifiers)
-        return issues
-
-
-    @classmethod
     def _get_queryset(cls, objects, **qualifiers):
         pass
 
@@ -299,28 +282,24 @@ class Issue():
 
 
 
-class FilterOperation():
-    # NOTE: only support equal operation
-    @classmethod
-    def filter(cls, objects, **kwargs):
-        # if not isinstance(objects, list):
-        #     objects = [objects]
-        pass
-
-
-
 # TODO: cache instance should use `userId:sessionId:object_name` as key
 # or use nested dict
 _git_object_cache = dict()
 
 def get_base_class(name):
+    # NOTE: generate sub-class `github login name` and `object entity`
+    github_login, obj_name = name.split(":")
+    base = None
     if name.endswith("issue"):
-        return Issue
+        base = Issue
     elif name.endswith("repository"):
-        return Repository
+        base = Repository
     else:
         raise exceptions.GitHubObjectNotFoundException(name)
+    base_name = base.__name__
 
+    klass_name = "{}{}".format(github_login.title(), base_name)
+    return type(klass_name, (base,), dict())
 
 def get_git_object(name):
     name = name.lower()

@@ -1,5 +1,4 @@
-import random
-import string
+import uuid
 from http.client import HTTPSConnection
 from urllib.parse import parse_qs
 from github import Github
@@ -20,7 +19,7 @@ def auth():
 
     token = request.args.get('token')
     if token:
-        state = ''.join(random.choices(string.ascii_letters + string.digits, k=30))
+        state = _get_random_string()
         db.execute('UPDATE user SET state=? WHERE token=?', (state, token))
         db.commit()
         redirect_url = 'https://github.com/login/oauth/authorize?client_id={}&state={}'.format(
@@ -73,5 +72,5 @@ def build_authentication_message(slack_user_id):
     return '{}/auth?token={}'.format(application.config['URL'], token)
 
 
-def _get_random_string(length=30):
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+def _get_random_string():
+    return uuid.uuid4().hex
