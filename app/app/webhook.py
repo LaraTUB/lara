@@ -39,13 +39,19 @@ def webhook():
             raise exceptions.LaraException()
         slack_user_id = original_request["data"]["event"]["user"]
 
-        user = dbapi.user_get_by__slack_user_id(slack_user_id)
-        if not user.github_login:
-            LOG.debug("User unknown, asking for authentication with token xxx")
+        try:
+            user = dbapi.user_get_by__slack_user_id(slack_user_id)
+        except exceptions.UserNotFoundBySlackUserId:
+            LOG.debug("Slack User unknown, asking for authentication with token xxx")
             return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
         else:
-            github_login = user.github_login
-            LOG.debug("Request by " + kwargs["assignee.login"])
+            if not user.github_login:
+                LOG.debug("Gihub Login unknown, asking for authentication with token xxx")
+                return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
+
+
+        github_login = user.github_login
+        LOG.debug("Request by " + kwargs["assignee.login"])
 
     kwargs["assignee.login"] = github_login
     try:

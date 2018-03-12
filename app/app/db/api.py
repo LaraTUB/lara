@@ -52,7 +52,6 @@ def _create_facade_lazily():
     return _ENGINE_FACADE
 
 
-
 def get_engine():
     facade = _create_facade_lazily()
     return facade.get_engine()
@@ -61,7 +60,6 @@ def get_engine():
 def get_session():
     facade = _create_facade_lazily()
     return facade.get_session()
-
 
 
 def model_query(model, session=None):
@@ -81,6 +79,7 @@ def model_get_all(model_class, session=None):
     objs = model_query(model_class, session=session).all()
     return objs
 
+
 def model_create(model_class, values):
     obj = model_class()
     obj.update(values)
@@ -90,7 +89,8 @@ def model_create(model_class, values):
 
 def model_update(model_class, exc_class, obj_id, values, session=None):
     obj = model_get(model_class, exc_class, obj_id, session)
-    values['updated_at'] = datetime.utcnow()
+    # TODO: add ~updated_at~ column in each table
+    # values['updated_at'] = datetime.utcnow()
     obj.update(values)
     obj.save(session)
     return obj
@@ -100,6 +100,27 @@ def model_delete(model_class, obj_id):
     session = get_session()
     with session.begin():
         session.query(model_class).filter_by(id=obj_id).delete()
+
+
+def user_get(obj_id):
+    return model_get(models.User, exceptions.UserNotFound,
+                     obj_id)
+
+
+def user_get_all():
+    return model_get_all(models.User)
+
+
+def user_create(values):
+    return model_create(models.User, values)
+
+
+def user_update(obj_id, values):
+    return model_update(models.User, exceptions.UserNotFound, obj_id, values)
+
+
+def user_delete(obj_id):
+    return model_delete(models.User, obj_id)
 
 
 def user_get_by__github_login(github_login, session=None):
@@ -117,4 +138,22 @@ def user_get_by__slack_user_id(slack_user_id, session=None):
 
     if not user:
         raise exceptions.UserNotFoundBySlackUserId(slack_user_id=slack_user_id)
+    return user
+
+
+def user_get_by__token(token, session=None):
+    user = model_query(models.User, session).\
+        filter_by(token=token).first()
+
+    if not user:
+        raise exceptions.UserNotFoundByToken(token=token)
+    return user
+
+
+def user_get_by__state(state, session=None):
+    user = model_query(models.User, session).\
+        filter_by(state=state).first()
+
+    if not user:
+        raise
     return user
