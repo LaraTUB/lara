@@ -1,7 +1,6 @@
 from github import Github
 from github.GithubException import UnknownObjectException
 
-import app
 from app import application
 from app import exceptions
 from app import log as logging
@@ -13,25 +12,16 @@ from app.db import api as dbapi
 
 LOG = logging.getLogger(__name__)
 
-GIT_HANDLER = None
-ORGANIZATION = None
-
 
 def _get_github_handler_lazily(github_login):
-    global GIT_HANDLER
-    if not GIT_HANDLER:
-        user = dbapi.user_get_by__github_login(github_login)
-        GIT_HANDLER = Github(user.github_token)
-
-    return GIT_HANDLER
+    user = dbapi.user_get_by__github_login(github_login)
+    return Github(user.github_token)
 
 
 def _get_organization_lazily(github_login):
-    global ORGANIZATION
-
-    # NOTE: oragnization name should be provided by the incoming request
-    if ORGANIZATION is None:
-        ORGANIZATION = _get_github_handler_lazily(github_login).get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
+    # TODO: oragnization name should be provided by the incoming request
+    ORGANIZATION = _get_github_handler_lazily(github_login).\
+                get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
 
     return ORGANIZATION
 
@@ -68,7 +58,6 @@ class Repository():
         return "Repository"
 
 
-
 class Issue():
     repository = None
     last_repository_name = None
@@ -87,7 +76,6 @@ class Issue():
                       "project")
     @classmethod
     def _get_repository(cls, **kwargs):
-        # TODO: set timeout for the repository instance
         if cls.repository is not None and \
            not kwargs.get("repository", None):
             return cls.repository
@@ -97,10 +85,11 @@ class Issue():
         if not name:
             raise exceptions.RepositoryNotProvidedException()
 
+
+        github_login = kwargs.pop("assignee.login")
         # TODO: handle case-sensitive, assuming all the input repository name is lower-case.
         # Here, sanity using the newly provided repository name, although
         # the repository maybe doesn't change
-        github_login = kwargs.pop("assignee.login")
         cls.repository = _get_organization_lazily(github_login).get_repo(name)
         cls.last_repository_name = name
         return cls.repository
@@ -271,20 +260,21 @@ class Issue():
 
         return issue_comment
 
-
     @classmethod
     def _get_queryset(cls, objects, **qualifiers):
         pass
-
 
     def __repr__(self):
         return "Issue"
 
 
+_git_object_cache = get_cache_handler()
 
-# TODO: cache instance should use `userId:sessionId:object_name` as key
-# or use nested dict
-_git_object_cache = dict()
+
+def invalid_cache_object(name):
+    LOG.debug("call invalid_cache_object to delete key %s" % name)
+    _git_object_cache.delete(name)
+
 
 def get_base_class(name):
     # NOTE: generate sub-class `github login name` and `object entity`
@@ -301,13 +291,15 @@ def get_base_class(name):
     klass_name = "{}{}".format(github_login.title(), base_name)
     return type(klass_name, (base,), dict())
 
+
 def get_git_object(name):
     name = name.lower()
     try:
         return _git_object_cache[name]
     except KeyError:
         base_class = get_base_class(name)
-        _git_object_cache[name] = base_class
-        LOG.debug("base class is %s." % base_class)
-        LOG.debug("cached git objects %s." % _git_object_cache)
+        _git_object_cache.set(name, base_class, invalid_cache_object,
+                              name)
+        LOG.debug("Base class is %s." % base_class)
+        LOG.debug("Cached git objects %s." % _git_object_cache)
         return _git_object_cache[name]
