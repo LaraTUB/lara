@@ -3,7 +3,7 @@ import json
 from flask import jsonify
 from flask import request
 
-from app import application, get_db
+from app import application
 from app import exceptions
 from app import log as logging
 from app import trigger

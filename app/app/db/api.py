@@ -89,8 +89,7 @@ def model_create(model_class, values):
 
 def model_update(model_class, exc_class, obj_id, values, session=None):
     obj = model_get(model_class, exc_class, obj_id, session)
-    # TODO: add ~updated_at~ column in each table
-    # values['updated_at'] = datetime.utcnow()
+    values['updated_at'] = datetime.utcnow()
     obj.update(values)
     obj.save(session)
     return obj

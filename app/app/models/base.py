@@ -11,10 +11,10 @@ Base = declarative_base()
 
 
 class Model(object):
-    # created_at = Column(DateTime, default=lambda: datetime.datetime.utcnow())
-    # updated_at = Column(DateTime, onupdate=lambda: datetime.datetime.utcnow(),
-    #                     default=lambda: datetime.datetime.utcnow())
-    # is_delete = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.utcnow())
+    updated_at = Column(DateTime, onupdate=lambda: datetime.datetime.utcnow(),
+                        default=lambda: datetime.datetime.utcnow())
+    is_deleted = Column(Boolean, default=False)
 
     def save(self, session=None):
         if session is None:
@@ -38,5 +38,5 @@ class Model(object):
         return k, v
 
     def delete(self):
-        self.is_delete = True
+        self.is_deleted = True
         self.save()
