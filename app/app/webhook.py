@@ -62,7 +62,10 @@ def webhook():
 
 
 def respond(**kwargs):
-    """Responds to dialogflow"""
+    """Responds to dialogflow
+
+    "speech" is the spoken version of the response, "displayText" is the visual version
+    """
     speech = kwargs.pop("speech", None)
     displayText = kwargs.pop("displayText", speech)
     if not speech:
@@ -70,7 +73,6 @@ def respond(**kwargs):
             source="Lara/lara backend"
         )
     else:
-        # "speech" is the spoken version of the response, "displayText" is the visual version
         response = dict(
             speech=speech,
             displayText=displayText,

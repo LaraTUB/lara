@@ -43,10 +43,12 @@ def close_connection(exception):
 
 
 # Connect to the Lara GithubApp
-with open(application.config['GITHUB_APP_PRIVATE_KEY'], 'r') as f:
-    private_key = f.read()
-github_app = GithubApp(application.config['GITHUB_APP_ID'], private_key)
-# installation = github_app.get_installation(application.config['GITHUB_APP_ID'])
+#with open(application.config['GITHUB_APP_PRIVATE_KEY'], 'r') as f:
+#    private_key = f.read()
+#    github_app = GithubApp(application.config['GITHUB_APP_ID'], private_key)
+#    installation = github_app.get_installation(112151)
+#    pass
+
 
 
 @application.route('/')

@@ -62,7 +62,6 @@ def auth():
         user = dbapi.user_update(user.id, values)
         return "Successfully connected Slack user id {} with Github user {}".format(
             user.slack_user_id, user.github_login)
-
     else:
         raise Exception('Bad state', status_code=400)
 
