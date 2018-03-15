@@ -14,8 +14,12 @@ LOG = logging.getLogger(__name__)
 
 
 def _get_github_handler_lazily(github_login):
-    user = dbapi.user_get_by__github_login(github_login)
-    return Github(user.github_token)
+    if application.config["GITHUB_USERNAME"] and application.config["GITHUB_PASSWORD"]:
+        return Github(application.config['GITHUB_USERNAME'],
+                      application.config['GITHUB_PASSWORD'])
+    else:
+        user = dbapi.user_get_by__github_login(github_login)
+        return Github(user.github_token)
 
 
 def _get_organization_lazily(github_login):
@@ -260,6 +264,12 @@ class Issue():
 
         return issue_comment
 
+
+    @classmethod
+    def score_pull_request(cls, name):
+        print("this is {}".format(name))
+
+
     @classmethod
     def _get_queryset(cls, objects, **qualifiers):
         pass
@@ -278,7 +288,11 @@ def invalid_cache_object(name):
 
 def get_base_class(name):
     # NOTE: generate sub-class `github login name` and `object entity`
-    github_login, obj_name = name.split(":")
+    if ":" in name:
+        github_login, obj_name = name.split(":")
+    else:
+        github_login, obj_name = "GithubLogin", name
+
     base = None
     if name.endswith("issue"):
         base = Issue
