@@ -9,20 +9,6 @@ from app import log as logging
 LOG = logging.getLogger(__name__)
 
 
-def extract_slack_parameters(req):
-    slack = req.get("originalRequest", dict())
-    if not slack:
-        return slack
-
-    kwargs = {
-        "assignee.login": slack["data"]["event"]["user"],
-        "team_id": slack["data"]["team_id"],
-        "request_source": "slack"
-    }
-
-    return kwargs
-
-
 def merge_parameters(req):
     kwargs = req["result"]["parameters"]
     parameters = dict()

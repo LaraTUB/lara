@@ -59,7 +59,7 @@ def auth():
                    (user.name, user.login, access_token, state))
         db.commit()
 
-        return "Successfully connected Slack user id {} with Github user {}".format(rows[0][3], user.login)
+        return "Successfully connected Slack user id {} with Github user {}".format(rows[0][4], user.login)
     else:
         raise Exception('Bad state', status_code=400)
 
