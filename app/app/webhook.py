@@ -25,7 +25,7 @@ def webhook():
     # Authenticate
     db = get_db()
     slack_user_id = req["originalRequest"]["data"]["event"]["user"]
-    row = db.execute('SELECT github_login FROM user WHERE slack_user_id=?', (slack_user_id,)).fetchall()
+    row = db.execute('SELECT github_login FROM user WHERE slack_user_id=? AND github_token IS NOT NULL', (slack_user_id,)).fetchall()
     if len(row) == 1:
         github_login = row[0][0]
         LOG.debug("Request by " + github_login)
@@ -36,6 +36,7 @@ def webhook():
         LOG.error("Weird database state!")
         raise exceptions.LaraException()
 
+    # Handle actions
     action = req["result"]["action"]
     if action == 'hello':
         gh = get_gh(github_login)
@@ -63,7 +64,10 @@ def webhook():
 
 
 def respond(**kwargs):
-    """Responds to dialogflow"""
+    """Responds to dialogflow
+
+    "speech" is the spoken version of the response, "displayText" is the visual version
+    """
     speech = kwargs.pop("speech", None)
     displayText = kwargs.pop("displayText", speech)
     if not speech:
@@ -71,7 +75,6 @@ def respond(**kwargs):
             source="Lara/lara backend"
         )
     else:
-        # "speech" is the spoken version of the response, "displayText" is the visual version
         response = dict(
             speech=speech,
             displayText=displayText,
