@@ -3,7 +3,7 @@ Your virtual project manager
 
 [![Build Status](https://travis-ci.org/LaraTUB/lara.svg?branch=master)](https://travis-ci.org/LaraTUB/lara)
 
-![Logo](img/lara_logo.png)
+![Logo](app/app/static/images/lara_logo.png)
 
 ## Setup for local development
 * create your local `instance/config.py`
