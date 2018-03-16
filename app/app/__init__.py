@@ -1,6 +1,6 @@
 import sqlite3
 
-from flask import Flask, g
+from flask import Flask, g, render_template
 from github import Github
 
 from app.authentication.GithubApp import GithubApp
@@ -55,7 +55,17 @@ def close_connection(exception):
 def hello_world():
     db = get_db()
     rows = db.execute('SELECT github_login, slack_user_id FROM user').fetchall()
-    return 'List of users:<br>' + '<br>'.join([' '.join(row) for row in rows])
+    users = []
+    for (github_login, slack_id) in rows:
+        user = get_gh(github_login).get_user()
+        users.append({
+            "name": user.name,
+            "avatar": user.avatar_url,
+            "github": github_login,
+            "slack": slack_id,
+            "url": user.html_url
+        })
+    return render_template('index.html', users=users)
 
 
 from app import webhook  # noqa
