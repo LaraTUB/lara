@@ -7,3 +7,5 @@ app/instance/*
 !app/instance/default.py
 
 app/app/flask_debug.py
+
+feature_prototypes/config.py
