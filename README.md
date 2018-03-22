@@ -7,10 +7,10 @@ Your virtual project manager
 
 ## Setup for local development
 * create your local `instance/config.py`
-* pull the latest database snapshot via `pull-database.sh`
 * For local development (easier to debug):
     * run `pip install --upgrade -r requirements.txt`
-    * cd to `app` and run `FLASK_APP=__init__.py flask run --port <port>`
+    * run `alembic upgrade head` to initalize database. **IMPORTANT** `alembic` command must run in the same directory of the `alembic.ini` file
+    * cd to `app` and run `python main.py` or `python main.py --help` for help
 * For development inside docker ("production" setup):
     * run `docker-compose build && docker-compose up`
 * run `ngrok http <port>`
@@ -18,7 +18,7 @@ Your virtual project manager
 * if you want to test the github authentication workflow also replace the auth hook in the Github App
 
 
-**IMPORTANT**: Change all urls to `ec2-54-89-185-46.compute-1.amazonaws.com` after you are done developing!
+**IMPORTANT**: Change all urls to `https://ask-lara.de` after you are done developing!
 
 
 ## GitHub App
