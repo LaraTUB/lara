@@ -27,7 +27,7 @@ class HyperCache():
                 if self._timers.get(key):
                     self._timers[key].cancel()
 
-                self._timers[key] = threading.Timer(self._interval, handler, *func_args, **func_kwargs)
+                self._timers[key] = threading.Timer(self._interval, handler, func_args, func_kwargs)
                 self._timers[key].start()
         finally:
             self._lock.release()
@@ -43,4 +43,17 @@ class HyperCache():
             if timer:
                 timer.cancel()
         finally:
+            LOG.debug("Delete key %s from hyper cache" % key)
             self._lock.release()
+
+
+    def __getitem__(self, key):
+        if key not in self._buffer.keys:
+            raise KeyError
+        return self.get(key)
+
+    def __setitem__(self, key, value):
+        self.set(key, value)
+
+    def __repr__(self):
+        return self._buffer.__repr__()

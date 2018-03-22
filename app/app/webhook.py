@@ -3,13 +3,15 @@ import json
 from flask import jsonify
 from flask import request
 
-from app import application, get_db, get_gh
+from app import application
 from app import exceptions
 from app import log as logging
 from app import trigger
 from app import utils
 from app.authentication import auth
 from app.objects import get_git_object
+from app.db import api as dbapi
+
 
 LOG = logging.getLogger(__name__)
 
@@ -23,25 +25,21 @@ def webhook():
         return respond(speech="Only requests via Slack supported")
 
     # Authenticate
-    db = get_db()
     slack_user_id = req["originalRequest"]["data"]["event"]["user"]
-    row = db.execute('SELECT github_login FROM user WHERE slack_user_id=? AND github_token IS NOT NULL', (slack_user_id,)).fetchall()
-    if len(row) == 1:
-        github_login = row[0][0]
-        LOG.debug("Request by " + github_login)
-    elif len(row) == 0:
-        LOG.debug("User unknown, asking for authentication with token xxx")
+    try:
+        user = dbapi.user_get_by__slack_user_id(slack_user_id)
+    except exceptions.UserNotFoundBySlackUserId:
+        LOG.debug("Slack User unknown, asking for authentication with token xxx")
         return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
     else:
-        LOG.error("Weird database state!")
-        raise exceptions.LaraException()
+        if not user.github_login:
+            LOG.debug("Gihub Login unknown, asking for authentication with token xxx")
+            return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
 
     # Handle actions
     action = req["result"]["action"]
     if action == 'hello':
-        gh = get_gh(github_login)
-        first_name = gh.get_user().name.split(' ')[0]
-        return respond(speech="Hi " + first_name)
+        return respond(speech="Hi " + user.github_login)
 
 
     # try:

@@ -8,29 +8,24 @@ from app import trigger
 from app import utils
 from app.cache import get_cache_handler
 from app.utils import serializer_fields, filter_fields, get_desired_parameters
+from app.db import api as dbapi
 
 LOG = logging.getLogger(__name__)
 
-GIT_HANDLER = None
-ORGANIZATION = None
 
-def _get_github_handler_lazily():
-    global GIT_HANDLER
-
-    # TODO: use token instead of private login information
-    if not GIT_HANDLER:
-        GIT_HANDLER = Github(application.config['GITHUB_USERNAME'],
-                             application.config['GITHUB_PASSWORD'])
-
-    return GIT_HANDLER
+def _get_github_handler_lazily(github_login):
+    if application.config["GITHUB_USERNAME"] and application.config["GITHUB_PASSWORD"]:
+        return Github(application.config['GITHUB_USERNAME'],
+                      application.config['GITHUB_PASSWORD'])
+    else:
+        user = dbapi.user_get_by__github_login(github_login)
+        return Github(user.github_token)
 
 
-def _get_organization_lazily():
-    global ORGANIZATION
-
-    # NOTE: oragnization name should be provided by the incoming request
-    if ORGANIZATION is None:
-        ORGANIZATION = _get_github_handler_lazily().get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
+def _get_organization_lazily(github_login):
+    # TODO: oragnization name should be provided by the incoming request
+    ORGANIZATION = _get_github_handler_lazily(github_login).\
+                get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
 
     return ORGANIZATION
 
@@ -67,7 +62,6 @@ class Repository():
         return "Repository"
 
 
-
 class Issue():
     repository = None
     last_repository_name = None
@@ -86,7 +80,6 @@ class Issue():
                       "project")
     @classmethod
     def _get_repository(cls, **kwargs):
-        # TODO: set timeout for the repository instance
         if cls.repository is not None and \
            not kwargs.get("repository", None):
             return cls.repository
@@ -96,10 +89,12 @@ class Issue():
         if not name:
             raise exceptions.RepositoryNotProvidedException()
 
+
+        github_login = kwargs.pop("assignee.login")
         # TODO: handle case-sensitive, assuming all the input repository name is lower-case.
         # Here, sanity using the newly provided repository name, although
         # the repository maybe doesn't change
-        cls.repository = _get_organization_lazily().get_repo(name)
+        cls.repository = _get_organization_lazily(github_login).get_repo(name)
         cls.last_repository_name = name
         return cls.repository
 
@@ -110,8 +105,9 @@ class Issue():
                        "labels.name")
     @filter_fields("id", "assignee.login")
     @get_desired_parameters("id", "repository", "state", "since", "labels",
-                            "session_id")
+                            "session_id", "assignee.login")
     def list(cls, **kwargs):
+        # TODO: `github_login` has no right to access issues
         session_id = kwargs.pop("session_id")
         if not session_id:
             raise exceptions.ServerExceptions()
@@ -132,6 +128,7 @@ class Issue():
 
         cls._get_repository(**kwargs)
         kwargs.pop("repository", "")
+        kwargs.pop("assignee.login", "")
         if not id:
             labels = kwargs.pop("labels", None)
             issues = cls.repository.get_issues(**kwargs)
@@ -152,7 +149,7 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
-    @get_desired_parameters("id", "repository")
+    @get_desired_parameters("id", "repository", "assignee.login")
     def close(cls, **kwargs):
         cls._get_repository(**kwargs)
         kwargs.pop("repository", "")
@@ -173,7 +170,7 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
-    @get_desired_parameters("id", "repository")
+    @get_desired_parameters("id", "repository", "assignee.login")
     def open(cls, **kwargs):
         cls._get_repository(**kwargs)
         kwargs.pop("repository", "")
@@ -195,7 +192,7 @@ class Issue():
                        "labels.name")
     @get_desired_parameters("repository", "title", "body",
                             "assignee", "labels",
-                            "session_id")
+                            "session_id", "assignee.login")
     def create(cls, **kwargs):
         cached_kwargs = cls._new_issue_cache.get(kwargs.get("session_id")) or dict()
 
@@ -226,7 +223,8 @@ class Issue():
     @serializer_fields("id", "state", "number", "title",
                        "body", "comments", "user.login",
                        "labels.name")
-    @get_desired_parameters("id", "repository", "body", "finished", "session_id")
+    @get_desired_parameters("id", "repository", "body", "finished", "session_id",
+                            "assignee.login")
     def comment(cls, **kwargs):
         cls._get_repository(**kwargs)
         try:
@@ -268,58 +266,44 @@ class Issue():
 
 
     @classmethod
-    @serializer_fields("id", "state", "number", "title",
-                       "body", "comments", "user.login",
-                       "labels.name")
-    def search(cls, **kwargs):
-        # TODO: before pass values into `search`
-        # we should do check whether those parameters are valid or not
-
-        query = kwargs.pop("query", "")
-        qualifiers = dict()
-        for key, value in kwargs.items():
-            if key in cls._search_fields and value:
-                qualifiers[key] = value
-        query = "test"
-        # qualifiers["project"] = "LaraTUB"
-        # qualifiers["repo"] = "test"
-        # qualifiers["state"] = "open"
-
-        issues =  _get_github_handler_lazily().search_issues(query, **qualifiers)
-        return issues
+    def score_pull_request(cls, name):
+        print("this is {}".format(name))
 
 
     @classmethod
     def _get_queryset(cls, objects, **qualifiers):
         pass
 
-
     def __repr__(self):
         return "Issue"
 
 
-
-class FilterOperation():
-    # NOTE: only support equal operation
-    @classmethod
-    def filter(cls, objects, **kwargs):
-        # if not isinstance(objects, list):
-        #     objects = [objects]
-        pass
+_git_object_cache = get_cache_handler()
 
 
+def invalid_cache_object(name):
+    LOG.debug("call invalid_cache_object to delete key %s" % name)
+    _git_object_cache.delete(name)
 
-# TODO: cache instance should use `userId:sessionId:object_name` as key
-# or use nested dict
-_git_object_cache = dict()
 
 def get_base_class(name):
+    # NOTE: generate sub-class `github login name` and `object entity`
+    if ":" in name:
+        github_login, obj_name = name.split(":")
+    else:
+        github_login, obj_name = "GithubLogin", name
+
+    base = None
     if name.endswith("issue"):
-        return Issue
+        base = Issue
     elif name.endswith("repository"):
-        return Repository
+        base = Repository
     else:
         raise exceptions.GitHubObjectNotFoundException(name)
+    base_name = base.__name__
+
+    klass_name = "{}{}".format(github_login.title(), base_name)
+    return type(klass_name, (base,), dict())
 
 
 def get_git_object(name):
@@ -328,7 +312,8 @@ def get_git_object(name):
         return _git_object_cache[name]
     except KeyError:
         base_class = get_base_class(name)
-        _git_object_cache[name] = base_class
-        LOG.debug("base class is %s." % base_class)
-        LOG.debug("cached git objects %s." % _git_object_cache)
+        _git_object_cache.set(name, base_class, invalid_cache_object,
+                              name)
+        LOG.debug("Base class is %s." % base_class)
+        LOG.debug("Cached git objects %s." % _git_object_cache)
         return _git_object_cache[name]

@@ -41,3 +41,6 @@ class MemoryBuffer(BaseCache):
         except KeyError:
             LOG.debug("Key %s not found in MemoryBuffer." % key)
             pass
+
+    def __repr__(self):
+        return self._buffer_pool.__repr__()

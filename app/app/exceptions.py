@@ -16,7 +16,7 @@ class OrganizationNotProvidedException(LaraException):
 
 
 class OrganizationNotFoundException(LaraException):
-    msg_fmt = "Organization %(name) not found."
+    msg_fmt = "Organization %(name)s not found."
 
 
 class RepositoryNotProvidedException(LaraException):
@@ -24,7 +24,7 @@ class RepositoryNotProvidedException(LaraException):
 
 
 class RepositoryNotFoundException(LaraException):
-    msg_fmt = "Repository %(name) not found."
+    msg_fmt = "Repository %(name)s not found."
 
 
 class IssueIdNotProvidedException(LaraException):
@@ -32,7 +32,7 @@ class IssueIdNotProvidedException(LaraException):
 
 
 class IssueIdNotFoundException(LaraException):
-    msg_fmt = "Issue %(id) not found."
+    msg_fmt = "Issue %(id)s not found."
 
 
 class IssueStateNotProvidedException(LaraException):
@@ -40,11 +40,11 @@ class IssueStateNotProvidedException(LaraException):
 
 
 class GithubObjectNotFoundExceptino(LaraException):
-    msg_fmt = "Github object %(name) not found."
+    msg_fmt = "Github object %(name)s not found."
 
 
 class IssueCommentNotFinishedException(LaraException):
-    msg_fmt = "Comments for issue %(id) not finished."
+    msg_fmt = "Comments for issue %(id)s not finished."
 
 
 class IssueBodyNotProvidedException(LaraException):
@@ -61,3 +61,19 @@ class IssueAssigneeNotProvidedException(LaraException):
 
 class IssueLabelNotProvidedException(LaraException):
     msg_fmt = "Issue label is not provided."
+
+
+class UserNotFound(LaraException):
+    msg_fmt = "User %(id)s not found."
+
+
+class UserNotFoundByGithubLogin(LaraException):
+    msg_fmt = "User %(github_login)s not found."
+
+
+class UserNotFoundBySlackUserId(LaraException):
+    msg_fmt = "User %(slack_user_id)s not found."
+
+
+class UserNotFoundByToken(LaraException)    :
+    msg_fmt = "User %(token)s not found."
