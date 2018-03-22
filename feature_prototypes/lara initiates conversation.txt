@@ -1,0 +1,12 @@
+Prerequisites:
+- Developer is part of organization
+- There are milestones with due dates
+- Issues are assigned to milestones and tagged according to topic
+
+Condition:
+- Milestone has a due date that is < 2 days away.
+
+Action:
+- If < 4 open issues -> "Milestone X is coming up, you've only got 2 more issues. Keep up the good work!"
+- If >= 4 open issues -> "It's only two days until Milestone X and you have 8 open issues. Do you need any help working on these?"
+	- If the developer answers yes, Lara will search for colleagues with skills matching the tasks in the tags of the issue

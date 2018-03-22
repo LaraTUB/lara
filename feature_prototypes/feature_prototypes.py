@@ -47,8 +47,7 @@ def create_score(poi):
 
 github = Github(config.github_oauth)
 test = github.get_organization("LaraTUB").get_repo("test")
-user = github.get_user("chenzongxiong")
-# user = github.get_user()
+user = github.get_user()
 
 all_issues = test.get_issues()
 all_pulls_paginated = test.get_pulls()
@@ -89,7 +88,6 @@ print("---")
 
 print("---")
 print("diff")
-# search = list(set(search_topic + search_lang))
 search = search_topic + search_lang
 print(search)
 print("---")
