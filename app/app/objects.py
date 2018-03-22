@@ -13,16 +13,20 @@ from app.db import api as dbapi
 LOG = logging.getLogger(__name__)
 
 
-def _get_github_handler_lazily(github_login):
-    if application.config["GITHUB_USERNAME"] and application.config["GITHUB_PASSWORD"]:
+def _get_github_handler_lazily(github_login=None):
+    if application.config.get("GITHUB_USERNAME") and application.config.get("GITHUB_PASSWORD"):
+        LOG.debug("Get github handler via username and password")
         return Github(application.config['GITHUB_USERNAME'],
                       application.config['GITHUB_PASSWORD'])
-    else:
+    elif github_login:
         user = dbapi.user_get_by__github_login(github_login)
         return Github(user.github_token)
+    else:
+        raise exceptions.LaraException("You must provide either username&password or github token.")
 
 
-def _get_organization_lazily(github_login):
+
+def _get_organization_lazily(github_login=None):
     # TODO: oragnization name should be provided by the incoming request
     ORGANIZATION = _get_github_handler_lazily(github_login).\
                 get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
@@ -90,7 +94,7 @@ class Issue():
             raise exceptions.RepositoryNotProvidedException()
 
 
-        github_login = kwargs.pop("assignee.login")
+        github_login = kwargs.pop("assignee.login", None)
         # TODO: handle case-sensitive, assuming all the input repository name is lower-case.
         # Here, sanity using the newly provided repository name, although
         # the repository maybe doesn't change
@@ -107,7 +111,6 @@ class Issue():
     @get_desired_parameters("id", "repository", "state", "since", "labels",
                             "session_id", "assignee.login")
     def list(cls, **kwargs):
-        # TODO: `github_login` has no right to access issues
         session_id = kwargs.pop("session_id")
         if not session_id:
             raise exceptions.ServerExceptions()
@@ -267,8 +270,10 @@ class Issue():
 
     @classmethod
     def score_pull_request(cls, name):
-        print("this is {}".format(name))
-
+        cls._get_repository(repository="test")
+        issues = [issue for issue in cls.repository.get_issues()]
+        # print("this is {}".format(name))
+        print(issues)
 
     @classmethod
     def _get_queryset(cls, objects, **qualifiers):
