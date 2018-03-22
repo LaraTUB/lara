@@ -21,25 +21,25 @@ application.config.from_pyfile('config.py')
 #             conn.commit()
 
 
-# Database connection
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(application.config['DATABASE'])
-    return db
+# # Database connection
+# def get_db():
+#     db = getattr(g, '_database', None)
+#     if db is None:
+#         db = g._database = sqlite3.connect(application.config['DATABASE'])
+#     return db
 
 
-def get_gh(github_login):
-    db = get_db()
-    github_token = db.execute('SELECT github_token FROM user WHERE github_login=?', (github_login,)).fetchall()[0][0]
-    return Github(github_token)
+# def get_gh(github_login):
+#     db = get_db()
+#     github_token = db.execute('SELECT github_token FROM user WHERE github_login=?', (github_login,)).fetchall()[0][0]
+#     return Github(github_token)
 
 
-@application.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
+# @application.teardown_appcontext
+# def close_connection(exception):
+#     db = getattr(g, '_database', None)
+#     if db is not None:
+#         db.close()
 
 
 # Connect to the Lara GithubApp
@@ -50,23 +50,25 @@ def close_connection(exception):
 #    pass
 
 
+from app.db import api as dbapi    # noqa
+from app import webhook  # noqa
+from app.authentication import auth  # noqa
+
 
 @application.route('/')
 def hello_world():
-    db = get_db()
-    rows = db.execute('SELECT github_login, slack_user_id FROM user').fetchall()
-    users = []
-    for (github_login, slack_id) in rows:
-        user = get_gh(github_login).get_user()
-        users.append({
-            "name": user.name,
-            "avatar": user.avatar_url,
-            "github": github_login,
-            "slack": slack_id,
-            "url": user.html_url
-        })
-    return render_template('index.html', users=users)
+    users = dbapi.user_get_all()
+    user_list = []
+    for user in users:
+        if not user.github_token:
+            continue
 
+        gh_user = Github(user.github_token).get_user()
+        values = dict(name=gh_user.name,
+                      avatar=gh_user.avatar_url,
+                      url=gh_user.html_url,
+                      github=user.github_login,
+                      slack=user.slack_user_id)
+        user_list.append(values)
 
-from app import webhook  # noqa
-from app.authentication import auth  # noqa
+    return render_template('index.html', users=user_list)

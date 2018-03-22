@@ -31,10 +31,10 @@ def webhook():
     except exceptions.UserNotFoundBySlackUserId:
         LOG.debug("Slack User unknown, asking for authentication with token xxx")
         return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
-    else:
-        if not user.github_login:
-            LOG.debug("Gihub Login unknown, asking for authentication with token xxx")
-            return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
+
+    if not user.github_token:
+        LOG.debug("Gihub Login unknown, asking for authentication with token xxx")
+        return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
 
     # Handle actions
     action = req["result"]["action"]
