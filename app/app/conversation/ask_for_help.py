@@ -1,33 +1,79 @@
 import json
+from github import Github
+
+from app.db.api import user_get_by__github_login
 
 
-def ask_for_help(user, topics, organization="LaraTUB"):
+def ask_for_help(user, topics, organization_name="LaraTUB"):
     """Example implementation of the "Ask for help" feature
 
     This method needs to send a lot of queries to Github and is not yet making use of any concurrency, which is why it
     is using heuristics to improve the overall response time. It is not necessarialy returning the best match possible,
     but the person with the most commits on the first repository found that is matching all provided topics.
-    """
-    assert len(topics) >= 1
 
-    repos = user.get_organization(organization).get_repos()
+    Args:
+        user (models.user.User): Internal user instance
+        topics (list(str)): List of topic names
+        organization_name (str): Target organization name
+
+    Returns:
+        (str): Lara's answer
+    """
+    assert len(topics) >= 1  # TODO Better error response
+
+    repos = get_organization_repos(organization_name, user)
+    topics_string = get_topics_string(topics)
     topics = [topic.lower() for topic in topics]
 
     for repo in get_matching_repos(repos, topics):
-        stats_contributors = repo.get_stats_contributors()  # This list is always sorted by total commits in ascending order
+        # This loop is an ugly hack, but get_stats_contributors() is buggy and nondeterministically returns None
+        for _ in range(10):
+            stats_contributors = repo.get_stats_contributors()
+            if stats_contributors:
+                break
         if not stats_contributors:
             continue
-        for stats_contributor in reversed(stats_contributors):
+        for stats_contributor in reversed(stats_contributors):  # stats_contributors is always sorted by total commits in ascending order
             author = stats_contributor.author
-            if organization in list(author.get_organizations()):
-                if len(topics) == 1:
-                    topics_string = topics[0]
-                else:
-                    topics_string = "{} and {}".format(', '.join(topics[:-1]), topics[-1])
-                return (f"You should ask ({author.name})[{author.url}] for help. He/She has the most contributions at "
-                        f"the repository ({repo.name})[{repo.url}], which is related to the topics {topics_string}")   # TODO Slack links
-    return ("Sorry, I did not find anyone in your organization that can help you with that.\n"
-            "Consider rephrasing or reducing the amount of the topics.")
+            if organization_name in [org.login for org in author.get_orgs()]:  # If the user is a member of the target organization
+                return (f"You should ask <{author.url}|{author.name}> for help. He/She has the most contributions at "
+                        f"the repository <{repo.url}|{organization_name}/{repo.name}>, which is related to {topics_string}")
+    return (f"Sorry, I did not find anyone in your organization that can help you with questions related to {topics_string}.\n"
+            f"Consider rephrasing or reducing the amount of the topics.")
+
+
+def get_topics_string(topics):
+    if len(topics) == 1:
+        return topics[0]
+    else:
+        return "the topics {} and {}".format(', '.join(topics[:-1]), topics[-1])
+
+
+def get_organization_repos(organization_name, user):
+    """Returns a Github PaginatedPages object that yields the repositories of an organization
+
+    If the github oauth token is able to read the user's organizations and private repositories _and_ if the user is
+    part of the organization, the result contains all projects that the user has access to.
+
+    If the github oauth token only has basic rights or the user is not part of the organization, only the publicly
+    accessible projects are returned.
+
+    Args:
+        organization_name (str): Target organization name
+        user (models.user.User): Internal user instance
+
+    Returns:
+        (github.PaginatedList): Guthub PaginatedList that yields repositories
+    """
+
+    # Check if the user is a member of the target organization and if yes, return all repositories he/she has access to
+    gh = Github(user.github_token)
+    if gh.oauth_scopes and "user" in gh.oauth_scopes:
+        for user_org in gh.get_user().get_orgs():
+            if user_org.name == organization_name:
+                return user_org.get_repos()
+    # Otherwise return all publicly available repositories of the target organization
+    return gh.get_organization(organization_name).get_repos()
 
 
 def get_matching_repos(repos, topics):
@@ -35,7 +81,7 @@ def get_matching_repos(repos, topics):
 
     Args:
         repos (github.PaginatedList): Guthub PaginatedList that yields repositories
-        topics list(str): List of topic names
+        topics (list(str)): List of topic names
 
     Yields:
         (github.Repository): Repository that matches all topics
@@ -103,7 +149,5 @@ def repo_matches_topic(repo, topic):
 
 
 if __name__ == "__main__":
-    from github import Github
-    from feature_prototypes import config
-    user = Github(config.github_oauth).get_user()
-    ask_for_help(user, ["Python"], "airbnb")
+    user = user_get_by__github_login('birnbaum')
+    print(ask_for_help(user, ["Go"], "mesos"))
