@@ -1,15 +1,17 @@
 import json
-
 import config
-from typing import List, Iterator
 
 import github
-from github import Github, Repository
-from github import Issue
-from github import PullRequest
+from github import Github
 
 
-def help(topics=["Python"], organization="airbnb"):
+def help(topics, organization):
+    """Example implementation of the "Ask for help" feature
+
+    This method needs to send a lot of queries to Github and is not yet making use of any concurrency, which is why it
+    is using heuristics to improve the overall response time. It is not necessarialy returning the best match possible,
+    but the person with the most commits on the first repository found that is matching all provided topics.
+    """
     gh = Github(config.github_oauth)
     repos = gh.get_organization(organization).get_repos()
     topics = [topic.lower() for topic in topics]
@@ -93,5 +95,6 @@ def get_matching_repos(repos, topics):
         if all_topics_match:
             yield repo
 
+
 if __name__ == "__main__":
-    help(organization="hashbang")
+    help(["Python"], "airbnb")
