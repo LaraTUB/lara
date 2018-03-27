@@ -6,10 +6,8 @@ from flask import request
 from app import application
 from app import exceptions
 from app import log as logging
-from app import trigger
-from app import utils
 from app.authentication import auth
-from app.objects import get_git_object
+from app.conversation.ask_for_help import ask_for_help
 from app.db import api as dbapi
 
 
@@ -40,6 +38,10 @@ def webhook():
     action = req["result"]["action"]
     if action == 'hello':
         return respond(speech="Hi " + user.github_login)
+    if action == 'ask_for_help':
+        # TODO get organization and topics
+        topics = ["Python"]
+        return respond(speech=ask_for_help(user, topics))
 
 
     # try:

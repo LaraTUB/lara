@@ -1,19 +1,16 @@
 import json
-import config
-
-import github
-from github import Github
 
 
-def help(topics, organization):
+def ask_for_help(user, topics, organization="LaraTUB"):
     """Example implementation of the "Ask for help" feature
 
     This method needs to send a lot of queries to Github and is not yet making use of any concurrency, which is why it
     is using heuristics to improve the overall response time. It is not necessarialy returning the best match possible,
     but the person with the most commits on the first repository found that is matching all provided topics.
     """
-    gh = Github(config.github_oauth)
-    repos = gh.get_organization(organization).get_repos()
+    assert len(topics) >= 1
+
+    repos = user.get_organization(organization).get_repos()
     topics = [topic.lower() for topic in topics]
 
     for repo in get_matching_repos(repos, topics):
@@ -21,7 +18,32 @@ def help(topics, organization):
         if not stats_contributors:
             continue
         for stats_contributor in reversed(stats_contributors):
-            return stats_contributor.author
+            author = stats_contributor.author
+            if organization in list(author.get_organizations()):
+                if len(topics) == 1:
+                    topics_string = topics[0]
+                else:
+                    topics_string = "{} and {}".format(', '.join(topics[:-1]), topics[-1])
+                return (f"You should ask ({author.name})[{author.url}] for help. He/She has the most contributions at "
+                        f"the repository ({repo.name})[{repo.url}], which is related to the topics {topics_string}")   # TODO Slack links
+    return ("Sorry, I did not find anyone in your organization that can help you with that.\n"
+            "Consider rephrasing or reducing the amount of the topics.")
+
+
+def get_matching_repos(repos, topics):
+    """Checks a list of repositories and yields those that match all topics in a list
+
+    Args:
+        repos (github.PaginatedList): Guthub PaginatedList that yields repositories
+        topics list(str): List of topic names
+
+    Yields:
+        (github.Repository): Repository that matches all topics
+    """
+    for repo in repos:
+        all_topics_match = all(repo_matches_topic(repo, topic) for topic in topics)
+        if all_topics_match:
+            yield repo
 
 
 def repo_matches_topic(repo, topic):
@@ -80,21 +102,8 @@ def repo_matches_topic(repo, topic):
     return False
 
 
-def get_matching_repos(repos, topics):
-    """Checks a list of repositories and yields those that match all topics in a list
-
-    Args:
-        repos (github.PaginatedList): Guthub PaginatedList that yields repositories
-        topics list(str): List of topic names
-
-    Yields:
-        (github.Repository): Repository that matches all topics
-    """
-    for repo in repos:
-        all_topics_match = all(repo_matches_topic(repo, topic) for topic in topics)
-        if all_topics_match:
-            yield repo
-
-
 if __name__ == "__main__":
-    help(["Python"], "airbnb")
+    from github import Github
+    from feature_prototypes import config
+    user = Github(config.github_oauth).get_user()
+    ask_for_help(user, ["Python"], "airbnb")
