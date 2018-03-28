@@ -5,8 +5,17 @@ from github import PullRequest
 import json
 
 def ask_for_todos(username, password):
-    top_issue = score(username, password)[:1][0]
-    return (f"How about this issue: {top_issue.title}")
+    issue_list = score(username, password)
+    response = ""
+    
+    if len(issue_list) < 1:
+        return "Seems like you have nothing to do."
+
+    top_issue = issue_list[:1][0]
+    response = (f"I've found {len(issue_list)} issues. This issue seems the most important to me: {top_issue.title}")
+
+    return response
+
 
 def score(username, password):
     gh = get_gh(username, password)
@@ -15,10 +24,10 @@ def score(username, password):
 
     # owned + forked + private with access + organization repos
     all_issues = list(test.get_issues())
-    all_pull_requestst = list(test.get_pulls())
-    # user_pull_requestst = [issue for issue in all_issues if issue.assignee and issue.assignee.login == user.login]
+    all_pull_requests = list(test.get_pulls())
+    # user_pull_requests = [issue for issue in all_issues if issue.assignee and issue.assignee.login == user.login]
 
-    issues_and_pulls = all_issues + all_pull_requestst
+    issues_and_pulls = all_issues + all_pull_requests
     sorted_issues_and_pulls = sorted(issues_and_pulls, key=lambda iop: create_score(iop, user), reverse=True)
     return sorted_issues_and_pulls
 
