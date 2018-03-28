@@ -5,38 +5,75 @@ from github import PullRequest
 import json
 
 def ask_for_todos(username, password):
-    issue_list = score(username, password)
-    response = ""
+    gh = get_gh(username, password)
+    test = gh.get_organization("LaraTUB").get_repo("test")
+    # TODO: this seems to return a generic user, which can be used to query all contributed/visible repos... find out if this is actually what is going on.
+    user = gh.get_user()
+    user_repos = user.get_repos()
+    all_issues = []
+    all_pull_requests = []
     
-    if len(issue_list) < 1:
+    for repo in user_repos:
+        all_issues += list(repo.get_issues())
+        all_pull_requests += list(repo.get_pulls())
+    
+    all_issues = [
+        issue
+        for issue in all_issues 
+        if (issue.assignee and issue.assignee.login == username) or (issue.user and username)
+    ]
+
+    issues_and_pulls = all_issues + all_pull_requests
+    sorted_issues_and_pulls = sorted(issues_and_pulls, key=lambda iop: create_score(iop, user), reverse=True)
+    #print_iop_with_score(sorted_issues_and_pulls, user)
+    
+    if len(sorted_issues_and_pulls) < 1:
         return "Seems like you have nothing to do."
 
-    top_issue = issue_list[:1][0]
-    response = (f"I've found {len(issue_list)} issues. This issue seems the most important to me: {top_issue.title}")
+    response = "I've found "
+
+    if len(all_issues) == 1:
+        response += "one Issue"
+    elif len(all_issues) > 1:
+        response += (f"{len(all_issues)} Issues")
+
+    if len(all_issues) >= 1 and len(all_pull_requests) >= 1:
+        response += " and "
+
+    if len(all_pull_requests) == 1:
+        response += "one Pull Request"
+    elif len(all_pull_requests) > 1:
+        response += (f"{len(all_pull_requests)} Pull Requests")
+
+    top_issue = sorted_issues_and_pulls[:1][0]
+    response += (f". This issue seems the most important to me: {top_issue.title}")
 
     return response
 
 
 def score(username, password):
-    gh = get_gh(username, password)
-    test = gh.get_organization("LaraTUB").get_repo("test")
-    user = gh.get_user()
 
-    # owned + forked + private with access + organization repos
-    all_issues = list(test.get_issues())
-    all_pull_requests = list(test.get_pulls())
-    # user_pull_requests = [issue for issue in all_issues if issue.assignee and issue.assignee.login == user.login]
-
-    issues_and_pulls = all_issues + all_pull_requests
-    sorted_issues_and_pulls = sorted(issues_and_pulls, key=lambda iop: create_score(iop, user), reverse=True)
     return sorted_issues_and_pulls
+
 
 def get_gh(username, password):
     github = Github(username, password)
     return github
 
 
-def score_issues(issue):
+def print_iop_with_score(iops, user):
+    print("----------")
+    print("Listing all issues and pull requests with score:")
+    
+    for iop in iops:
+        print("---")
+        print(iop)
+        print(create_score(iop, user))
+
+    print("----------")
+
+
+def score_issues(issue, user):
     labels = issue.labels
     score = 0
     for label in labels:
@@ -52,7 +89,8 @@ def score_issues(issue):
             score += 50
 
     # TODO assigned to
-    # created by
+    issue
+    # TODO created by
 
     return score
 
@@ -72,18 +110,9 @@ def score_pull_request(pull, user):
     return score
 
 
-def pull_or_issue(iop):
-    if isinstance(iop, Issue.Issue):
-        print("this is a issue")
-    elif isinstance(iop, PullRequest.PullRequest):
-        print("this is a pull req")
-    else:
-        print("this is something else")
-
-
 def create_score(iop, user):
     if isinstance(iop, Issue.Issue):
-        return score_issues(iop)
+        return score_issues(iop, user)
     elif isinstance(iop, PullRequest.PullRequest):
         return score_pull_request(iop, user)
     else:
