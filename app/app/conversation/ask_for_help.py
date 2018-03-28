@@ -25,8 +25,8 @@ def ask_for_help(user, topics, organization_name="LaraTUB"):
 
     try:
         repos = get_organization_repos(organization_name, user)
-    except GithubException.UnknownObjectException:
-        return "Sorry, the organization does not seem to exist"
+    except GithubException:
+        return f"Sorry, the organization {organization_name} does not seem to exist"
 
     topics_string = get_topics_string(topics)
     topics = [topic.lower() for topic in topics]
@@ -41,9 +41,11 @@ def ask_for_help(user, topics, organization_name="LaraTUB"):
             continue
         for stats_contributor in reversed(stats_contributors):  # stats_contributors is always sorted by total commits in ascending order
             author = stats_contributor.author
-            if organization_name in [org.login for org in author.get_orgs()]:  # If the user is a member of the target organization
-                return (f"You should ask <{author.url}|{author.name}> for help. He/She has the most contributions at "
-                        f"the repository <{repo.html_url}|{organization_name}/{repo.name}>, which is related to {topics_string}")
+            # The check if the user is a member of the target organization is currently commented out because we would
+            # Need to request additional rights from the users oauth token, which we do not want to do in the prototype
+            # if organization_name in [org.login for org in author.get_orgs()]:
+            return (f"You should ask <{author.html_url}|{author.name}> for help. He/She has the most contributions at "
+                    f"the repository <{repo.html_url}|{organization_name}/{repo.name}>, which is related to {topics_string}")
     return (f"Sorry, I did not find anyone in your organization that can help you with questions related to {topics_string}.\n"
             f"Consider rephrasing or reducing the amount of topics.")
 
@@ -115,16 +117,16 @@ def repo_matches_topic(repo, topic):
         (bool): True if repository matches the topic, False otherwise
     """
 
+    # True if topic name matches any programming language used in the repository
+    languages = [language.lower() for language in list(repo.get_languages())]
+    if topic in languages:
+        return True
+
     # True if topic name is contained in a repository label
     labels = repo.get_labels()
     for label in labels:
         if topic in label.name:
             return True
-
-    # True if topic name matches any programming language used in the repository
-    languages = [language.lower() for language in list(repo.get_languages())]
-    if topic in languages:
-        return True
 
     # True if topic name matches a library used by the project (exemplary implementation)
     root_files = set([file.name for file in repo.get_contents('.')])
