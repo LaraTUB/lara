@@ -1,5 +1,6 @@
 import json
-from github import Github
+
+from github import Github, GithubException
 
 from app.db.api import user_get_by__github_login
 
@@ -19,9 +20,14 @@ def ask_for_help(user, topics, organization_name="LaraTUB"):
     Returns:
         (str): Lara's answer
     """
-    assert len(topics) >= 1  # TODO Better error response
+    if len(topics) < 1:
+        return "You should provide at least one topic"
 
-    repos = get_organization_repos(organization_name, user)
+    try:
+        repos = get_organization_repos(organization_name, user)
+    except GithubException.UnknownObjectException:
+        return "Sorry, the organization does not seem to exist"
+
     topics_string = get_topics_string(topics)
     topics = [topic.lower() for topic in topics]
 
@@ -37,9 +43,9 @@ def ask_for_help(user, topics, organization_name="LaraTUB"):
             author = stats_contributor.author
             if organization_name in [org.login for org in author.get_orgs()]:  # If the user is a member of the target organization
                 return (f"You should ask <{author.url}|{author.name}> for help. He/She has the most contributions at "
-                        f"the repository <{repo.url}|{organization_name}/{repo.name}>, which is related to {topics_string}")
+                        f"the repository <{repo.html_url}|{organization_name}/{repo.name}>, which is related to {topics_string}")
     return (f"Sorry, I did not find anyone in your organization that can help you with questions related to {topics_string}.\n"
-            f"Consider rephrasing or reducing the amount of the topics.")
+            f"Consider rephrasing or reducing the amount of topics.")
 
 
 def get_topics_string(topics):
@@ -65,16 +71,17 @@ def get_organization_repos(organization_name, user):
     Returns:
         (github.PaginatedList): Guthub PaginatedList that yields repositories
     """
+    gh = Github(user.github_token)
 
     # Check if the user is a member of the target organization and if yes, return all repositories he/she has access to
-    gh = Github(user.github_token)
     if gh.oauth_scopes and "user" in gh.oauth_scopes:
         for user_org in gh.get_user().get_orgs():
             if user_org.name == organization_name:
-                return user_org.get_repos()
+                org = user_org
     # Otherwise return all publicly available repositories of the target organization
-    return gh.get_organization(organization_name).get_repos()
-
+    else:
+        org = gh.get_organization(organization_name)
+    return org.get_repos()
 
 def get_matching_repos(repos, topics):
     """Checks a list of repositories and yields those that match all topics in a list
