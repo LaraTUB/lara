@@ -154,5 +154,5 @@ def user_get_by__state(state, session=None):
         filter_by(state=state).first()
 
     if not user:
-        raise
+        raise Exception
     return user

@@ -6,17 +6,15 @@ from flask import request
 from app import application
 from app import exceptions
 from app import log as logging
-from app import trigger
-from app import utils
 from app.authentication import auth
-from app.objects import get_git_object
+from app.conversation.ask_for_help import ask_for_help
 from app.db import api as dbapi
 
 
 LOG = logging.getLogger(__name__)
 
 
-@application.route('/webhook', methods=['GET', 'POST'])
+@application.route("/webhook", methods=["GET", "POST"])
 def webhook():
     req = request.get_json(silent=True, force=True)
     LOG.debug("Request from dialogflow: %s" % req)
@@ -30,17 +28,31 @@ def webhook():
         user = dbapi.user_get_by__slack_user_id(slack_user_id)
     except exceptions.UserNotFoundBySlackUserId:
         LOG.debug("Slack User unknown, asking for authentication with token xxx")
-        return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
+        return respond(speech="Hi! Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
 
     if not user.github_token:
         LOG.debug("Gihub Login unknown, asking for authentication with token xxx")
-        return respond(speech="Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
+        return respond(speech="Hi! Please authenticate with Github:\n" + auth.build_authentication_message(slack_user_id))
 
     # Handle actions
     action = req["result"]["action"]
-    if action == 'hello':
+    if action == "hello":
         return respond(speech="Hi " + user.github_login)
 
+    try:
+        parameters = req["result"]["parameters"]
+        if action == "ask_for_help":
+            if parameters["organization"]:
+                result = ask_for_help(user, parameters["topic"], parameters["organization"])
+            else:
+                result = ask_for_help(user, parameters["topic"])
+            return respond(speech=result)
+
+        # Place other actions here
+
+    except Exception as e:
+        LOG.error("Unexpected exception: " + e)
+        return respond(speech="I am sorry, an unknown error occurred...")
 
     # try:
     #     # TODO way to pass
@@ -58,7 +70,7 @@ def webhook():
     # except:
     #     raise exceptions.LaraException()
 
-    return respond(speech="Unknown action")
+    return respond(speech="Sorry, I don't understand what you want from me")
 
 
 def respond(**kwargs):
