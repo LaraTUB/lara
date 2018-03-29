@@ -2,14 +2,15 @@ from github import Github
 from github import Issue
 from github import PullRequest
 
+from app.db.api import user_get_by__github_login
+
 import json
 
-def ask_for_todos(username, password):
-    gh = get_gh(username, password)
-    test = gh.get_organization("LaraTUB").get_repo("test")
+def ask_for_todos(user):
+    gh = Github(user.github_token)
     # TODO: this seems to return a generic user, which can be used to query all contributed/visible repos... find out if this is actually what is going on.
-    user = gh.get_user()
-    user_repos = user.get_repos()
+    ghuser = gh.get_user(user.github_login)
+    user_repos = ghuser.get_repos("all")
     all_issues = []
     all_pull_requests = []
     
@@ -20,12 +21,11 @@ def ask_for_todos(username, password):
     all_issues = [
         issue
         for issue in all_issues 
-        if (issue.assignee and issue.assignee.login == username) or (issue.user and username)
+        if (issue.assignee and issue.assignee.login == user.github_name) or (issue.user and user.github_name)
     ]
 
     issues_and_pulls = all_issues + all_pull_requests
     sorted_issues_and_pulls = sorted(issues_and_pulls, key=lambda iop: create_score(iop, user), reverse=True)
-    #print_iop_with_score(sorted_issues_and_pulls, user)
     
     if len(sorted_issues_and_pulls) < 1:
         return "Seems like you have nothing to do."
@@ -49,16 +49,6 @@ def ask_for_todos(username, password):
     response += (f". This issue seems the most important to me: {top_issue.title}")
 
     return response
-
-
-def score(username, password):
-
-    return sorted_issues_and_pulls
-
-
-def get_gh(username, password):
-    github = Github(username, password)
-    return github
 
 
 def print_iop_with_score(iops, user):
@@ -89,7 +79,6 @@ def score_issues(issue, user):
             score += 50
 
     # TODO assigned to
-    issue
     # TODO created by
 
     return score
@@ -120,4 +109,5 @@ def create_score(iop, user):
 
 
 if __name__ == "__main__":
-    print(ask_for_todos())
+    user = user_get_by__github_login('testuserlara')
+    print(app.conversation.ask_for_todos.ask_for_todos(user))
