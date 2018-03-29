@@ -37,6 +37,7 @@ def webhook():
 
     # Handle actions
     action = req["result"]["action"]
+    print(action)
     if action == "hello":
         return respond(speech="Hi " + user.github_login)
     if action == "ask_for_help":
@@ -44,6 +45,8 @@ def webhook():
         topics = ["Python"]
         return respond(speech=ask_for_help(user, topics))
 
+    if action == "ask_for_todos":
+        return respond(speech=ask_for_todos(user))
 
     # try:
     #     # TODO way to pass
