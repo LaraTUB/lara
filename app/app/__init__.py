@@ -10,6 +10,7 @@ application.config.from_pyfile('config.py')
 from app.db import api as dbapi    # noqa
 from app import webhook  # noqa
 from app.authentication import auth  # noqa
+from app.db import events as dbevents # noqa
 
 
 @application.route('/')
