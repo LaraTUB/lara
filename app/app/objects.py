@@ -1,3 +1,4 @@
+import datetime
 from github import Github
 from github.GithubException import UnknownObjectException
 
@@ -9,6 +10,8 @@ from app import utils
 from app.cache import get_cache_handler
 from app.utils import serializer_fields, filter_fields, get_desired_parameters
 from app.db import api as dbapi
+from app.tests import fakes
+
 
 LOG = logging.getLogger(__name__)
 
@@ -27,7 +30,7 @@ def _get_github_handler_lazily(github_login=None):
 
 
 def _get_organization_lazily(github_login=None):
-    # TODO: oragnization name should be provided by the incoming request
+    # TODO: organization name should be provided by the incoming request
     ORGANIZATION = _get_github_handler_lazily(github_login).\
                 get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
 
@@ -46,7 +49,6 @@ class Repository():
             return _get_organization_lazily().get_repos()
         try:
             return _get_organization_lazily().get_repo(name)
-        # except github_exceptions.UnknownObjectException():
         except UnknownObjectException:
             raise exceptions.RepositoryNotFoundException(name)
 
@@ -61,6 +63,75 @@ class Repository():
 
         return _get_github_handler_lazily().search_repositories(query, **qualifiers)
 
+
+    @classmethod
+    def get_milestone(cls, github_login):
+        # import ipdb; ipdb.set_trace()
+        if not application.config.get("OFFLINE", False):
+            repo = _get_organization_lazily().get_repo("test")
+            milestones = repo.get_milestones()
+        else:
+            milestones = True
+
+        if milestones:
+            if not application.config.get("OFFLINE", False):
+                milestone = milestones[0]
+            else:
+                milestone = fakes.FakeMileStone("fake test2", 5,
+                                                datetime.datetime.utcnow(),
+                                                "closed")
+            # check if already cached in database.
+            # try:
+            #     dbapi.milestone_get_by__number(milestone.number)
+            #     return True
+            # except:
+            #     pass
+
+            try:
+                user = dbapi.user_get_by__github_login(github_login)
+            except exceptions.UserNotFoundByGithubLogin:
+                user = dbapi.user_get_all().first()
+
+            values = dict(
+                number=milestone.number,
+                title=milestone.title,
+                state=milestone.state,
+                due_on=milestone.due_on,
+                user_id=user.id,
+                user=user
+            )
+
+            dbapi.milestone_create(values)
+
+            # TODO: Cache latest milestones into database. Use database trigger
+            # to automatically deliver messages to a broker(like *LIST/MAP* in
+            # memory). Different users use different topics. The broker stores
+            # messages in memory as following:
+            # {"user1": ["milestone1", "milestone2"], "user2": ["milestone3"]}
+            # For each user, his milestones are sorted by datetime.
+            # When a consumer takes a message from the broker then try to find
+            # the related issues. Finally he will decide whether to
+            # send message to fronted user or not.
+
+            # Case 1: how to deliver and when to deliver
+            # whenever we cache a new milestone in our database, the database will
+            # trigger an event. At this moment, we create an instance/object in memory,
+            # which will automatically deliver to broker according to configured date
+            # Here we assume that the consumer will consume the message in broker immediately.
+            # If this message is consumed, and the user doesn't finish his issues. We
+            # should deliever this notification to user again in the future.
+
+            # Case 2: The server is down.
+            # If our server is down, simply, we can scan the whole milestone table to
+            # re-deliever(from database aspect) messages the broker.
+            # Of course, we might miss some messages.
+
+            # To prevent some orgnazation add new milestones, we need to periodically
+            # scan the github repositories(organizations), like 1 day.
+
+            pass
+        else:
+            LOG.info("Not Found any *milestone* in repositories.")
 
     def __repr__(self):
         return "Repository"
