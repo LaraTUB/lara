@@ -22,3 +22,6 @@ class MileStone(Base, Model):
     due_on = Column(DateTime, nullable=True)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=True)
     user = relationship("User", backref=backref('milestone', order_by=id))
+    raw_data = Column(String(1024), nullable=True)
+    # repository_id = Column(Integer, ForeignKey('repository.id'), nullable=True)
+    # repository = relationship("Repository", backref=backref('milestone', order_by=id))

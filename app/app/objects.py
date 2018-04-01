@@ -1,3 +1,4 @@
+import json
 import datetime
 from github import Github
 from github.GithubException import UnknownObjectException
@@ -66,31 +67,29 @@ class Repository():
 
     @classmethod
     def get_milestone(cls, github_login):
-        # import ipdb; ipdb.set_trace()
         if not application.config.get("OFFLINE", False):
-            repo = _get_organization_lazily().get_repo("test")
+            repo = _get_organization_lazily(github_login).get_repo("test")
             milestones = repo.get_milestones()
         else:
-            milestones = True
+            milestone = fakes.FakeMileStone("fake test2", 5,
+                                            datetime.datetime.utcnow(),
+                                            "open")
+            milestones = [milestone]
 
-        if milestones:
-            if not application.config.get("OFFLINE", False):
-                milestone = milestones[0]
-            else:
-                milestone = fakes.FakeMileStone("fake test2", 5,
-                                                datetime.datetime.utcnow(),
-                                                "closed")
-            # check if already cached in database.
-            # try:
-            #     dbapi.milestone_get_by__number(milestone.number)
-            #     return True
-            # except:
-            #     pass
+        for milestone in milestones:
+            if not milestone.due_on:
+                continue
+            if datetime.datetime.utcnow() > milestone.due_on:
+                continue
 
+            user = dbapi.user_get_by__github_login(github_login)
             try:
-                user = dbapi.user_get_by__github_login(github_login)
-            except exceptions.UserNotFoundByGithubLogin:
-                user = dbapi.user_get_all().first()
+                # TODO: add another table to make data model more flexiable
+                dbapi.milestone_get_by(user_id=user.id, number=milestone.number)
+                LOG.debug("Milestone has already cached in database.")
+                continue
+            except:
+                pass
 
             values = dict(
                 number=milestone.number,
@@ -98,38 +97,10 @@ class Repository():
                 state=milestone.state,
                 due_on=milestone.due_on,
                 user_id=user.id,
-                user=user
+                user=user,
+                raw_data=json.dumps(milestone.raw_data)
             )
-
             dbapi.milestone_create(values)
-
-            # TODO: Cache latest milestones into database. Use database trigger
-            # to automatically deliver messages to a broker(like *LIST/MAP* in
-            # memory). Different users use different topics. The broker stores
-            # messages in memory as following:
-            # {"user1": ["milestone1", "milestone2"], "user2": ["milestone3"]}
-            # For each user, his milestones are sorted by datetime.
-            # When a consumer takes a message from the broker then try to find
-            # the related issues. Finally he will decide whether to
-            # send message to fronted user or not.
-
-            # Case 1: how to deliver and when to deliver
-            # whenever we cache a new milestone in our database, the database will
-            # trigger an event. At this moment, we create an instance/object in memory,
-            # which will automatically deliver to broker according to configured date
-            # Here we assume that the consumer will consume the message in broker immediately.
-            # If this message is consumed, and the user doesn't finish his issues. We
-            # should deliever this notification to user again in the future.
-
-            # Case 2: The server is down.
-            # If our server is down, simply, we can scan the whole milestone table to
-            # re-deliever(from database aspect) messages the broker.
-            # Of course, we might miss some messages.
-
-            # To prevent some orgnazation add new milestones, we need to periodically
-            # scan the github repositories(organizations), like 1 day.
-
-            pass
         else:
             LOG.info("Not Found any *milestone* in repositories.")
 
@@ -355,7 +326,6 @@ class Issue():
 
 
 _git_object_cache = get_cache_handler()
-
 
 def invalid_cache_object(name):
     LOG.debug("call invalid_cache_object to delete key %s" % name)

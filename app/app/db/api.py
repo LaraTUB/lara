@@ -169,9 +169,35 @@ def milestone_create(values):
     return model_create(models.MileStone, values)
 
 
+def milestone_get_all():
+    return model_get_all(models.MileStone)
+
+
 def milestone_get_by__number(number, session=None):
     milestone = model_query(models.MileStone, session).\
             filter_by(number=number).first()
+
+    if not milestone:
+        raise
+    return milestone
+
+
+def milestone_get_by__user_id(number, session=None):
+    milestone = model_query(models.MileStone, session).\
+            filter_by(number=number).first()
+
+    if not milestone:
+        raise
+    return milestone
+
+
+def milestone_delete(obj_id):
+    return model_delete(models.MileStone, obj_id)
+
+
+def milestone_get_by(session=None, **kwargs):
+    milestone = model_query(models.MileStone, session).\
+            filter_by(**kwargs).first()
 
     if not milestone:
         raise
