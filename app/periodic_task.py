@@ -46,7 +46,7 @@ def produce_milestone(periodic_spacing=app.application.config.get("PERIODIC_SPAC
 
 
 def consume_milestone(
-        periodic_spacing=app.application.config.get("PERIODIC_SPACING", 5),
+        periodic_spacing=app.application.config.get("CONSUME_PERIODIC_SPACING", 5),
         time_delta=app.application.config.get("DAYS_BEFORE_DUE", 2),
         timeout=None):
     queue = manager.get_queue()

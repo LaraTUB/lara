@@ -92,7 +92,7 @@ def alert_due_on_milestone(milestone):
         incoming_url = application.config['SLACK_APP_INCOMING_URL'][user.slack_user_id]
     except KeyError:
         LOG.error("user %s isn't configured well." % user.github_login)
-        incoming_url = application.config['SLACK_APP_INCOMING_URL']['U7UJ7Q3RP']
+        incoming_url = application.config['SLACK_APP_INCOMING_URL'][application.config['DEFAULT_SLACK_CHANNEL']]
         text = "Hi {}. {}".format(user.github_login, text)
 
     data = {"text": text}
@@ -103,21 +103,24 @@ def alert_due_on_milestone(milestone):
 
 def find_colleagues_matching_skills(github_login):
     '''
-    Lara will search for colleagues with skills matching the tasks in the tags of the issue.
+    Lara will search for colleagues in the same repo with fewer open issues.
     '''
-    pass
-    # users = dbapi.user_get_all()
-    # d = dict()
-    # for user in users:
-    #     if user.github_login == github_login:
-    #         continue
-    #     github_login = user.github_login
-    #     issue_obj = get_git_object("{}:issue".format(github_login))
-    #     kwargs = {"repository": application.config['REPOSITORY'],
-    #               "assignee.login": github_login,
-    #               "session_id": "{}:{}".format(github_login, uuid.uuid4())}
-    #     issues = issue_obj.list(**kwargs)
-    #     count = len(issues)
-    #     d[user.github_token] = count
+    users = dbapi.user_get_all()
+    d = dict()
+    for user in users:
+        if user.github_login == github_login:
+            continue
+        github_login = user.github_login
+        issue_obj = get_git_object("{}:issue".format(github_login))
+        kwargs = {"repository": application.config['REPOSITORY'],
+                  "assignee.login": github_login,
+                  "session_id": "{}:{}".format(github_login, uuid.uuid4())}
+        issues = issue_obj.list(**kwargs)
+        count = len(issues)
+        d[user.github_token] = count
 
-    # sorted_d = sorted(d.items(), key=operator.itemgetter(1))
+    sorted_d = sorted(d.items(), key=operator.itemgetter(1))
+    # return first k-th colleagues as choices
+    if len(sorted_d) < application.config.get("FOUND_COLLEAGUES_COUNT", 3):
+        return sorted_d
+    return sorted_d[0:application.config.get("FOUND_COLLEAGUES_COUNT", 3)]
