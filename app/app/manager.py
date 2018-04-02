@@ -31,27 +31,25 @@ class QueueManager(BaseManager):
 QueueManager.register('get_queue', callable=lambda:get_broker_handler())
 
 
-MANAGER = None
-broker_host = application.config.get("BROKER_HOST", "127.0.0.1")
-broker_port = application.config.get("BROKER_PORT", 50000)
-broker_authkey = application.config.get("BROKER_AUTHKEY", b'default')
-
-def _get_manager():
-    global MANAGER
-    if not MANAGER:
-        MANAGER = QueueManager(address=(broker_host, broker_port), authkey=broker_authkey)
-
-    return MANAGER
-
+def _get_manager(broker_host, broker_port, broker_authkey):
+    return QueueManager(address=(broker_host, broker_port), authkey=broker_authkey)
 
 def get_server():
-    m = _get_manager()
+    broker_host = application.config.get("BROKER_BIND_ADDRESS", "127.0.0.1")
+    broker_port = application.config.get("BROKER_PORT", 50000)
+    broker_authkey = application.config.get("BROKER_AUTHKEY", b'default')
+    m = _get_manager(broker_host, broker_port, broker_authkey)
     server = m.get_server()
     return server
 
 
 def get_queue():
-    m = _get_manager()
+    import os
+    broker_host = application.config.get("BROKER_HOST", "127.0.0.1")
+    broker_host = os.environ.get("BROKER_HOST") if os.environ.get("BROKER_HOST") else broker_host
+    broker_port = application.config.get("BROKER_PORT", 50000)
+    broker_authkey = application.config.get("BROKER_AUTHKEY", b'default')
+    m = _get_manager(broker_host, broker_port, broker_authkey)
     m.connect()
     q = m.get_queue()
     return q

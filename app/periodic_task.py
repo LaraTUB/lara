@@ -94,7 +94,7 @@ if __name__ == "__main__":
         consume_milestone()
     elif argv.server:
         LOG.debug("Server runs at address: %s, port: %s" %
-                  (app.application.config.get("BROKER_HOST", "127.0.0.1"),
+                  (app.application.config.get("BROKER_BIND_ADDRESS", "127.0.0.1"),
                    app.application.config.get("BROKER_PORT", 50000)))
         server = manager.get_server()
         server.serve_forever()

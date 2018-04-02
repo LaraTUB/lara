@@ -17,7 +17,10 @@ OFFLINE = False
 PERIODIC_SPACING = 86400
 CONSUME_PERIODIC_SPACING = 5
 
+# The IP where the broker service runs.
 BROKER_HOST = "127.0.0.1"
+# 0.0.0.0 means accept all clients' connection
+BROKER_BIND_ADDRESS = "127.0.0.1"
 BROKER_PORT = 50000
 
 DEFAULT_SLACK_CHANNEL = 'test'

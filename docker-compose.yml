@@ -6,3 +6,33 @@ services:
       - ./app/instance:/app/instance
     ports:
       - '3000:80'
+
+  broker:
+    build: .
+    volumes:
+      - ./app/instance:/app/instance
+    command: ["python", "periodic_task.py", "--server"]
+    restart: on-failure
+    network_mode: "host"
+    ports:
+      - "50000:50000"
+
+  producer:
+    build: .
+    volumes:
+      - ./app/instance:/app/instance
+    network_mode: "host"
+    restart: on-failure
+    command: ["python", "periodic_task.py", "--produce"]
+    depends_on:
+      - broker
+
+  consumer:
+    build: .
+    volumes:
+      - ./app/instance:/app/instance
+    command: ["python", "periodic_task.py", "--consume"]
+    network_mode: "host"
+    restart: on-failure
+    depends_on:
+      - broker

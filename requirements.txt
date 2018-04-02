@@ -6,3 +6,4 @@ six==1.11.0
 SQLAlchemy==1.2.5
 SQLAlchemy-Utils==0.33.1
 alembic==0.9.8
+requests==2.18.4
