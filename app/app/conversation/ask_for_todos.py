@@ -7,6 +7,14 @@ from app.db.api import user_get_by__github_login
 import json
 
 def ask_for_todos(user):
+    """ Example implementation of the "Ask for todos" feature
+
+    Args:
+        user (models.user.User): Internal user instance
+
+    Returns:
+        (str): Lara's answer
+    """
     gh = Github(user.github_token)
     # TODO: this seems to return a generic user, which can be used to query all contributed/visible repos... find out if this is actually what is going on.
     ghuser = gh.get_user(user.github_login)
@@ -25,7 +33,7 @@ def ask_for_todos(user):
     ]
 
     issues_and_pulls = all_issues + all_pull_requests
-    sorted_issues_and_pulls = sorted(issues_and_pulls, key=lambda iop: create_score(iop, user), reverse=True)
+    sorted_issues_and_pulls = sorted(issues_and_pulls, key=lambda iop: create_score(iop, ghuser), reverse=True)
     
     if len(sorted_issues_and_pulls) < 1:
         return "Seems like you have nothing to do."
@@ -45,8 +53,20 @@ def ask_for_todos(user):
     elif len(all_pull_requests) > 1:
         response += (f"{len(all_pull_requests)} Pull Requests")
 
-    top_issue = sorted_issues_and_pulls[:1][0]
-    response += (f". This issue seems the most important to me: {top_issue.title}")
+    response += ". "
+    top_issues = sorted_issues_and_pulls[:3]
+
+    if len(sorted_issues_and_pulls) == 1:
+        response += "This seems"
+    else:
+        response += "These seem"
+
+    response += " the most important to me:\n"
+    
+    count = 1
+    for top_issue in top_issues:
+        response += (f"{count}. <{top_issue.html_url}|{top_issue.title}>\n")
+        count += 1
 
     return response
 
@@ -91,9 +111,9 @@ def score_pull_request(pull, user):
     # TODO also show pull requests not assigned/created by the user
 
     if pull.assignee == user:
-        score = 50
+        score = 200
     elif pull.assignee == None:
-        score = 30
+        score = 50
     else:
         score = 0
     return score
