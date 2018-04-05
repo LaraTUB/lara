@@ -40,13 +40,25 @@ def webhook():
     print(action)
     if action == "hello":
         return respond(speech="Hi " + user.github_login)
-    if action == "ask_for_help":
-        # TODO get organization and topics
-        topics = ["Python"]
-        return respond(speech=ask_for_help(user, topics))
 
-    if action == "ask_for_todos":
+    try:
+        parameters = req["result"]["parameters"]
+        if action == "ask_for_help":
+            if parameters["organization"]:
+                result = ask_for_help(user, parameters["topic"], parameters["organization"])
+            else:
+                result = ask_for_help(user, parameters["topic"])
+            return respond(speech=result)
+          
+        if action == "ask_for_todos":
         return respond(speech=ask_for_todos(user))
+
+        # Place other actions here
+
+    except Exception as e:
+        LOG.error("Unexpected exception: " + e)
+        return respond(speech="I am sorry, an unknown error occurred...")
+
 
     # try:
     #     # TODO way to pass
@@ -64,7 +76,7 @@ def webhook():
     # except:
     #     raise exceptions.LaraException()
 
-    return respond(speech="Unknown action")
+    return respond(speech="Sorry, I don't understand what you want from me")
 
 
 def respond(**kwargs):
