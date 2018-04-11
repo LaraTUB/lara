@@ -13,10 +13,6 @@ LOG = logging.getLogger(__name__)
 
 @application.route('/auth')
 def auth():
-    # TODO check parameters
-    # TODO factor out authentication tokens
-    # TODO created time
-
     token = request.args.get('token')
     if token:
         state = _get_random_string()
@@ -24,6 +20,8 @@ def auth():
         values = {"state": state}
         user = dbapi.user_update(user.id, values)
 
+        # Here we can request higher scopes for e.g. also being able to read a users private repositories (scope=user)
+        # For keeping the prototype simple, we do not request any additional rights
         redirect_url = 'https://github.com/login/oauth/authorize?client_id={}&state={}'.format(
             application.config['GITHUB_OAUTH_CLIENT_ID'], state)
         return redirect(redirect_url, code=302)
