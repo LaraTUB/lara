@@ -1,11 +1,15 @@
 import json
 
+from github import Github
 from flask import jsonify
 from flask import request
 
 from app import application
 from app import exceptions
 from app import log as logging
+from app import trigger
+from app import utils
+from app import manager
 from app.authentication import auth
 from app.conversation.ask_for_help import ask_for_help
 from app.conversation.ask_for_todos import ask_for_todos
@@ -42,6 +46,19 @@ def webhook():
     print(action)
     if action == "hello":
         return respond(speech="Hi " + user.github_login)
+
+    if action == 'find-colleagues':
+        colleagues = manager.find_colleagues_matching_skills(user.github_login)
+        text = ""
+        for github_token, issue_count in colleagues:
+            gh = Github(github_token)
+            user = gh.get_user()
+            if issue_count != 0:
+                text += "<{}|{}> has only {} open issues.".format(user.html_url, user.login, issue_count)
+            else:
+                text += "<{}|{}> finished all issues.".format(user.html_url, user.login)
+            text += "You can ask them for help."
+        return respond(speech="Found Colleagues." + text)
 
     try:
         parameters = req["result"]["parameters"]

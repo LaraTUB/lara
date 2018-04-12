@@ -39,6 +39,9 @@ class EngineFacade(object):
     def get_engine(self):
         return self._engine
 
+    def get_session_maker(self):
+        return self._session_maker
+
     def get_session(self):
         return self._session_maker()
 
@@ -57,6 +60,10 @@ def get_engine():
     return facade.get_engine()
 
 
+def get_session_maker():
+    return _create_facade_lazily().get_session_maker()
+
+
 def get_session():
     facade = _create_facade_lazily()
     return facade.get_session()
@@ -68,7 +75,7 @@ def model_query(model, session=None):
 
 
 def model_get(model_class, exc_class, obj_id, session=None):
-    obj = model_query(model_class, session).filter_by(id=obj_id).first()
+    obj = model_query(model_class, session).filter_by(id=obj_id, is_deleted=False).first()
 
     if not obj:
         raise exc_class(id=obj_id)
@@ -76,7 +83,7 @@ def model_get(model_class, exc_class, obj_id, session=None):
 
 
 def model_get_all(model_class, session=None):
-    objs = model_query(model_class, session=session).all()
+    objs = model_query(model_class, session=session).filter_by(is_deleted=False)
     return objs
 
 
@@ -98,7 +105,7 @@ def model_update(model_class, exc_class, obj_id, values, session=None):
 def model_delete(model_class, obj_id):
     session = get_session()
     with session.begin():
-        session.query(model_class).filter_by(id=obj_id).delete()
+        session.query(model_class).filter_by(id=obj_id, is_deleted=False).delete()
 
 
 def user_get(obj_id):
@@ -156,3 +163,42 @@ def user_get_by__state(state, session=None):
     if not user:
         raise Exception
     return user
+
+
+def milestone_create(values):
+    return model_create(models.MileStone, values)
+
+
+def milestone_get_all():
+    return model_get_all(models.MileStone)
+
+
+def milestone_get_by__number(number, session=None):
+    milestone = model_query(models.MileStone, session).\
+            filter_by(number=number).first()
+
+    if not milestone:
+        raise
+    return milestone
+
+
+def milestone_get_by__user_id(number, session=None):
+    milestone = model_query(models.MileStone, session).\
+            filter_by(number=number).first()
+
+    if not milestone:
+        raise
+    return milestone
+
+
+def milestone_delete(obj_id):
+    return model_delete(models.MileStone, obj_id)
+
+
+def milestone_get_by(session=None, **kwargs):
+    milestone = model_query(models.MileStone, session).\
+            filter_by(**kwargs).first()
+
+    if not milestone:
+        raise
+    return milestone

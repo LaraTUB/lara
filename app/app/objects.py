@@ -1,3 +1,5 @@
+import json
+import datetime
 from github import Github
 from github.GithubException import UnknownObjectException
 
@@ -9,6 +11,8 @@ from app import utils
 from app.cache import get_cache_handler
 from app.utils import serializer_fields, filter_fields, get_desired_parameters
 from app.db import api as dbapi
+from app.tests import fakes
+
 
 LOG = logging.getLogger(__name__)
 
@@ -27,7 +31,7 @@ def _get_github_handler_lazily(github_login=None):
 
 
 def _get_organization_lazily(github_login=None):
-    # TODO: oragnization name should be provided by the incoming request
+    # TODO: organization name should be provided by the incoming request
     ORGANIZATION = _get_github_handler_lazily(github_login).\
                 get_organization(application.config.get('ORGANIZATION', 'LaraTUB'))
 
@@ -46,7 +50,6 @@ class Repository():
             return _get_organization_lazily().get_repos()
         try:
             return _get_organization_lazily().get_repo(name)
-        # except github_exceptions.UnknownObjectException():
         except UnknownObjectException:
             raise exceptions.RepositoryNotFoundException(name)
 
@@ -61,6 +64,45 @@ class Repository():
 
         return _get_github_handler_lazily().search_repositories(query, **qualifiers)
 
+
+    @classmethod
+    def get_milestone(cls, github_login):
+        if not application.config.get("OFFLINE", False):
+            repo = _get_organization_lazily(github_login).get_repo("test")
+            milestones = repo.get_milestones()
+        else:
+            milestone = fakes.FakeMileStone("fake test2", 5,
+                                            datetime.datetime.utcnow(),
+                                            "open")
+            milestones = [milestone]
+
+        for milestone in milestones:
+            if not milestone.due_on:
+                continue
+            if datetime.datetime.utcnow() > milestone.due_on:
+                continue
+
+            user = dbapi.user_get_by__github_login(github_login)
+            try:
+                # TODO: add another table to make data model more flexiable
+                dbapi.milestone_get_by(user_id=user.id, number=milestone.number)
+                LOG.debug("Milestone has already cached in database.")
+                continue
+            except:
+                pass
+
+            values = dict(
+                number=milestone.number,
+                title=milestone.title,
+                state=milestone.state,
+                due_on=milestone.due_on,
+                user_id=user.id,
+                user=user,
+                raw_data=json.dumps(milestone.raw_data)
+            )
+            dbapi.milestone_create(values)
+        else:
+            LOG.info("Not Found any *milestone* in repositories.")
 
     def __repr__(self):
         return "Repository"
@@ -284,7 +326,6 @@ class Issue():
 
 
 _git_object_cache = get_cache_handler()
-
 
 def invalid_cache_object(name):
     LOG.debug("call invalid_cache_object to delete key %s" % name)
