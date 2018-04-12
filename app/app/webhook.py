@@ -17,6 +17,8 @@ LOG = logging.getLogger(__name__)
 
 @application.route("/webhook", methods=["GET", "POST"])
 def webhook():
+    """Endpoint for the dialogflow fulfillment webhook"""
+
     req = request.get_json(silent=True, force=True)
     LOG.debug("Request from dialogflow: %s" % req)
 
@@ -51,7 +53,7 @@ def webhook():
             return respond(speech=result)
           
         if action == "ask_for_todos":
-        return respond(speech=ask_for_todos(user))
+            return respond(speech=ask_for_todos(user))
 
         # Place other actions here
 
@@ -76,7 +78,7 @@ def webhook():
     # except:
     #     raise exceptions.LaraException()
 
-    return respond(speech="Sorry, I don't understand what you want from me")
+    return respond(speech="Sorry, I did not understand what you want")
 
 
 def respond(**kwargs):
