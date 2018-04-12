@@ -8,6 +8,7 @@ from app import exceptions
 from app import log as logging
 from app.authentication import auth
 from app.conversation.ask_for_help import ask_for_help
+from app.conversation.ask_for_todos import ask_for_todos
 from app.db import api as dbapi
 
 
@@ -36,6 +37,7 @@ def webhook():
 
     # Handle actions
     action = req["result"]["action"]
+    print(action)
     if action == "hello":
         return respond(speech="Hi " + user.github_login)
 
@@ -47,12 +49,16 @@ def webhook():
             else:
                 result = ask_for_help(user, parameters["topic"])
             return respond(speech=result)
+          
+        if action == "ask_for_todos":
+        return respond(speech=ask_for_todos(user))
 
         # Place other actions here
 
     except Exception as e:
         LOG.error("Unexpected exception: " + e)
         return respond(speech="I am sorry, an unknown error occurred...")
+
 
     # try:
     #     # TODO way to pass

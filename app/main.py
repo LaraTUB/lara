@@ -2,6 +2,8 @@ import sys
 import argparse
 import app
 
+from app.db.api import user_get_by__github_login
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -33,5 +35,6 @@ if __name__ == "__main__":
     elif argv.github_username and argv.github_password:
         app.application.config["GITHUB_USERNAME"] = argv.github_username
         app.application.config["GITHUB_PASSWORD"] = argv.github_password
-        issue = app.objects.get_git_object("issue")
-        issue.score_pull_request("test for score pull request")
+        
+        user = user_get_by__github_login('testuserlara')
+        print(app.conversation.ask_for_todos.ask_for_todos(user))
