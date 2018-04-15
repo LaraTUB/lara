@@ -1,4 +1,4 @@
-from github import Github
+from github import Github, GithubException
 from github import Issue
 from github import PullRequest
 
@@ -19,11 +19,11 @@ def ask_for_todos(user):
     """
     gh = Github(user.github_token)
     ghuser = gh.get_user(user.github_login)
-    user_repos = ghuser.get_repos("all")
     issues_and_pulls = []
     pulls_only = []
+    org_repos = gh.get_organization("LaraTUB").get_repos()
     
-    for repo in user_repos:
+    for repo in org_repos:
         issues_and_pulls += list(repo.get_issues())
         pulls_only += list(repo.get_pulls())
     
@@ -32,12 +32,9 @@ def ask_for_todos(user):
     if len(sorted_issues_and_pulls) < 1:
         return "Seems like there is nothing to do."
 
-    response = "I've found the following:"
+    response = "I've found the following: \n"
 
     top_iops = sorted_issues_and_pulls[:3]
-
-    if len(sorted_issues_and_pulls) > 1:
-        response += " These seem the most important to me:\n"
     
     count = 1
     for top_iop in top_iops:
@@ -64,7 +61,7 @@ def ask_for_todos(user):
     count = 0
     for pull in pulls_only:
         reviews = list(pull.get_reviews())
-        if len(reviews) > 0:
+        if len(reviews) > 0 and pull.assignee == ghuser:
             count += 1
             pull_response += (f"<{pull.html_url}|{pull.title}>\n")
 
