@@ -6,7 +6,7 @@ Your virtual project manager
 ![Logo](app/app/static/images/lara_logo.png)
 
 ## Setup for local development
-* create your local `instance/config.py`
+* create your local `instance/config.py` according to `instance/config.py.example`
 * For local development (easier to debug):
     * run `pip install --upgrade -r requirements.txt`
     * run `alembic upgrade head` to initalize database. **IMPORTANT** `alembic` command must run in the same directory of the `alembic.ini` file

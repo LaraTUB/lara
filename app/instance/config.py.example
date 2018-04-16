@@ -12,3 +12,21 @@ DIALOGFLOW_CLIENT_ACCESS_TOKEN = <CLIENT_ACCESS_TOKEN>
 
 GITHUB_USERNAME = <GITHUB_USERNAME>
 GITHUB_PASSWORD = <GITHUB_PASSWORD>
+
+BROKER_AUTHKEY = <BROKER_AUTHKEY>
+
+SLACK_APP_INCOMING_URL_<NAME_OF_CHANNEL> = <URL_OF_CHANNALE>
+SLACK_APP_INCOMING_URL_<GITHUB_NAME> = <URL_OF_CHANNALE>
+
+SLACK_APP_INCOMING_URL = dict(
+    <KEY>=SLACK_APP_INCOMING_URL_<NAME_OF_CHANNEL>,
+    <SLACK_USER_ID>=SLACK_APP_INCOMING_URL_<GITHUB_NAME>,
+)
+
+################################################################################
+###            Example configuration for SLACK_APP_INCOMING_URL              ###
+### SLACK_APP_INCOMING_URL_ZXCHEN = "https://hooks.slack.com/services/xxxxx" ###
+### SLACK_APP_INCOMING_URL = dict(                                           ###
+###      U7UJ7Q3RP=SLACK_APP_INCOMING_URL_ZXCHEN,                            ###
+### )                                                                        ###
+################################################################################
