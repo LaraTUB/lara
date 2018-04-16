@@ -115,7 +115,8 @@ def find_colleagues_matching_skills(github_login):
                   "session_id": "{}:{}".format(github_login, uuid.uuid4())}
         issues = issue_obj.list(**kwargs)
         count = len(issues)
-        d[user.github_token] = count
+        if count <= application.config.get("ISSUES_BEFORE_DUE", 4):
+            d[user.github_token] = count
 
     sorted_d = sorted(d.items(), key=operator.itemgetter(1))
     # return first k-th colleagues as choices
