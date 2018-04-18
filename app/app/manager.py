@@ -89,10 +89,11 @@ def alert_due_on_milestone(milestone):
     try:
         incoming_url = application.config['SLACK_APP_INCOMING_URL'][user.slack_user_id]
     except KeyError:
-        LOG.error("user %s isn't configured well." % user.github_login)
+        LOG.error("User %s isn't configured well." % user.github_login)
         incoming_url = application.config['SLACK_APP_INCOMING_URL'][application.config['DEFAULT_SLACK_CHANNEL']]
-        text = "Hi {}. {}".format(user.github_login, text)
+        LOG.warn("Try to use '%s' as delivery endpoint" % incoming_url)
 
+    text = "Hi {}. {}".format(user.github_login, text)
     data = {"text": text}
     requests.post(incoming_url, data=json.dumps(data))
     # Alerted developer, so safely remove it from cache
@@ -108,11 +109,10 @@ def find_colleagues_matching_skills(github_login):
     for user in users:
         if user.github_login == github_login:
             continue
-        github_login = user.github_login
-        issue_obj = get_git_object("{}:issue".format(github_login))
+        issue_obj = get_git_object("{}:issue".format(user.github_login))
         kwargs = {"repository": application.config['REPOSITORY'],
-                  "assignee.login": github_login,
-                  "session_id": "{}:{}".format(github_login, uuid.uuid4())}
+                  "assignee.login": user.github_login,
+                  "session_id": "{}:{}".format(user.github_login, uuid.uuid4())}
         issues = issue_obj.list(**kwargs)
         count = len(issues)
         if count <= application.config.get("ISSUES_BEFORE_DUE", 4):
