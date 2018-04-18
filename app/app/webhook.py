@@ -49,16 +49,22 @@ def webhook():
 
     if action == 'find-colleagues':
         colleagues = manager.find_colleagues_matching_skills(user.github_login)
+        if len(colleagues) == 0:
+            return respond(speech="Sorry. Everyone is struggling for coming deadline! No one could support you.")
+
         text = ""
         for github_token, issue_count in colleagues:
             gh = Github(github_token)
             user = gh.get_user()
             if issue_count != 0:
-                text += "<{}|{}> has only {} open issues.".format(user.html_url, user.login, issue_count)
+                text += "<{}|{}> has only {} open issues. ".format(user.html_url, user.login, issue_count)
             else:
-                text += "<{}|{}> finished all issues.".format(user.html_url, user.login)
-            text += "You can ask them for help."
-        return respond(speech="Found Colleagues." + text)
+                text += "<{}|{}> finished all issues. ".format(user.html_url, user.login)
+
+        suffix = "them" if len(colleagues) > 1 else "him/her"
+        text += "You can ask {} for help.".format(suffix)
+
+        return respond(speech="Found Colleagues. " + text)
 
     try:
         parameters = req["result"]["parameters"]
@@ -68,7 +74,7 @@ def webhook():
             else:
                 result = ask_for_help(user, parameters["topic"])
             return respond(speech=result)
-          
+
         if action == "ask_for_todos":
             return respond(speech=ask_for_todos(user))
 
