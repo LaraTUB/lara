@@ -81,11 +81,13 @@ def alert_due_on_milestone(milestone):
     text = None
     raw_data = json.loads(milestone.raw_data)
     if len(issues) < application.config.get("ISSUES_BEFORE_DUE", 4):
-        text = "Milestone <{}|{}> is coming up, you've only got 2 more issues. Keep up the good work!".format(raw_data.get('html_url', ''), milestone.title)
+        text = "Milestone <{}|{}> is coming up, you've only got {} more issues. Keep up the good work!".format(raw_data.get('html_url', ''),
+                                                                                                               milestone.title,
+                                                                                                               len(issues))
     else:
-        text = "It's only two days until Milestone <{}|{}> and you have {} open issues. Do you need any help working on these?".format(raw_data.get('html_url', ''),
-                                                                                                                                       milestone.title,
-                                                                                                                                       len(issues))
+        text = "It's only two days until Milestone <{}|{}> is due and you have {} open issues. Do you need any help?".format(raw_data.get('html_url', ''),
+                                                                                                                             milestone.title,
+                                                                                                                             len(issues))
     try:
         incoming_url = application.config['SLACK_APP_INCOMING_URL'][user.slack_user_id]
     except KeyError:
@@ -101,9 +103,7 @@ def alert_due_on_milestone(milestone):
 
 
 def find_colleagues_matching_skills(github_login):
-    '''
-    Lara will search for colleagues in the same repo with fewer open issues.
-    '''
+    """Lara will search for colleagues in the same repo with fewer open issues."""
     users = dbapi.user_get_all()
     d = dict()
     for user in users:

@@ -1,4 +1,4 @@
-# ONLY ADD *PUBLIC* SETTINGS IN THIS FILE
+# ADD *PUBLIC* SETTINGS IN THIS FILE
 
 URL = "https://ask-lara.de"
 DATABASE = './instance/lara.db'

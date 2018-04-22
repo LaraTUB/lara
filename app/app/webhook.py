@@ -50,7 +50,7 @@ def webhook():
     if action == 'find-colleagues':
         colleagues = manager.find_colleagues_matching_skills(user.github_login)
         if len(colleagues) == 0:
-            return respond(speech="Sorry. Everyone is struggling for coming deadline! No one could support you.")
+            return respond(speech="Sorry, I could not find anyone. It seems like everyone is struggling to meet the deadline!")
 
         text = ""
         for github_token, issue_count in colleagues:
@@ -64,7 +64,7 @@ def webhook():
         suffix = "them" if len(colleagues) > 1 else "him/her"
         text += "You can ask {} for help.".format(suffix)
 
-        return respond(speech="Found Colleagues. " + text)
+        return respond(speech="I found colleagues that may finish their work early this milestrone. " + text)
 
     try:
         parameters = req["result"]["parameters"]
