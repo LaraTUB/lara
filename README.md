@@ -10,11 +10,11 @@ To try out the prototype you have two options: You can either install and set up
 
 ### Install and set up everything from scratch
 
-1. Create a [Dialogflow](https://dialogflow.com/) account and agent
-2. [Import](https://dialogflow.com/docs/agents#export_and_import) our settings and trained models contained in `./chatbots/lara.zip`
+1. Create a [Dialogflow](https://dialogflow.com/) account and Agent
+2. [Import](https://dialogflow.com/docs/Agents#export_and_import) our settings and trained models contained in `./chatbots/lara.zip`
 3. Create a [Slack App](https://api.slack.com/slack-apps) and [connect it to Dialogflow](https://dialogflow.com/docs/integrations/slack#link_slack_to_dialogflow)
 4. Set up either a publicly reachable server which you want to deploy Lara to, or a [ngrok](https://ngrok.com/) tunnel
-5. Point your Dialogflow agent's fulfillment webhook to `http(s)://<your server/tunnel url>/webhook`
+5. Point your Dialogflow Agent's fulfillment webhook to `http(s)://<your server/tunnel url>/webhook`
 6. Create a [Github OAuth App](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/) with the following settings
     * Homepage URL: `http(s)://<your server/tunnel url>`
     * Authorization callback URL: `http(s)://<your server/tunnel url>/auth`
@@ -44,8 +44,8 @@ To run the code locally:
 
 ### Use the existing test environment
 As Lara is based on many different external services and cumbersome to set up, you can also make use of our current test environment.
-It consists out of a Slack App, a Dialogflow agent, a Github OAuth App and a server running on AWS EC2.
+It consists out of a Slack App, a Dialogflow Agent, a Github OAuth App and a server running on AWS EC2.
 
 The master branch of this git repository is automatically deployed to the EC2 instance on every commit, so you can be sure the latest version is the one you are testing at any time.
 
-To request access to our test environment, write an email to p.wiesner[at]campus.tu-berlin.de and tell your google email address. We will then invite you to our test Slack Workspace and our Dialogflow agent where you can try our Lara by yourself.
+To request access to our test environment, write an email at p.wiesner[at]campus.tu-berlin.de containing your google email address. We will then invite you to our Slack Workspace and our Dialogflow Agent, where you can try out Lara by yourself.
