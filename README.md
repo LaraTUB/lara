@@ -5,6 +5,14 @@ Your virtual project manager
 
 ![Logo](app/app/static/images/lara_logo.png)
 
+## Features
+Lara is currently in a prototype state and only supports a number of selected features:
+1. __Authentication__ of users with Github OAuth and mapping between Slack Users and Github Users.
+   This feature is automatically triggered once a unknown users asks Lara a question.
+2. __Daily summary of tasks__, triggered by questions like "What do I have to do today?"
+3. __Ask for help__ on specific topics within your or other organizations by asking questions like "I need help with Python and Docker" or "Search for an expert in Java at Google".
+4. __Detection of approaching Milestones__. Lara automatically starts conversations with developers that still have a lot of open tickets at the end of a sprint and recomends them other developers that may have some time left and can help.
+
 ## How to try out Lara
 To try out the prototype you have two options: You can either install and set up everything from scratch or make use of the existing test environment.
 
