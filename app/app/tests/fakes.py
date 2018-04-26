@@ -1,3 +1,6 @@
+"""A bunch of fake objects for integration testing"""
+
+
 class Fake(object):
     def __init__(self, **kwargs):
         for k, v in kwargs.items():

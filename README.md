@@ -3,7 +3,9 @@ Your virtual project manager
 
 [![Build Status](https://travis-ci.org/LaraTUB/lara.svg?branch=master)](https://travis-ci.org/LaraTUB/lara)
 
-![Logo](app/app/static/images/lara_logo.png)
+[Check out the demo video!](https://youtu.be/CL8gTM-HH2o)
+
+[![Logo](app/app/static/images/lara_logo.png)](https://youtu.be/CL8gTM-HH2o)
 
 ## Features
 Lara is currently in a prototype state and only supports a number of selected features:
@@ -12,6 +14,26 @@ Lara is currently in a prototype state and only supports a number of selected fe
 2. __Daily summary of tasks__, triggered by questions like "What do I have to do today?"
 3. __Ask for help__ on specific topics within your or other organizations by asking questions like "I need help with Python and Docker" or "Search for an expert in Java at Google".
 4. __Detection of approaching Milestones__. Lara automatically starts conversations with developers that still have a lot of open tickets at the end of a sprint and recomends them other developers that may have some time left and can help.
+
+## Architecture
+
+![Architecture](app/app/static/images/architecture.png)
+
+For a full overview of the architecture [watch out the demo video](https://youtu.be/CL8gTM-HH2o) and read the installation section.
+
+A few additional comments:
+
+* Lara currently only supports Slack as a frontend.
+  Messages that are sent via Slack will be mapped to intents within Dialogflow and then passed to the Lara python server, that processes the requests.
+* The sqlite database is only used to store the `Slack User <-> Github Account` mappings and the necessesary tokens for authentication.
+* The Dialogflow import package `./chatbots/lara.zip` contains the trained models which map messages to intents. The project does currently not include further machine learning code.
+* The `producer`, `consumer` and `broker` services in the `docker-compose.yml` are used to periodically crawl Github for approaching milestones and to initiate conversations. They are not necessary for any features of the schema Question -> Answer.
+
+A screenshot of the services running on our EC2 instance:
+
+![EC2](app/app/static/images/ec2-docker.png)
+
+As you can see, it's the four services from `docker-compose.yml` plus a few containers to manage the https connection.
 
 ## How to try out Lara
 To try out the prototype you have two options: You can either install and set up everything from scratch or make use of the existing test environment.
