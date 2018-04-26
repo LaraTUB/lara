@@ -19,14 +19,14 @@ Lara is currently in a prototype state and only supports a number of selected fe
 
 ![Architecture](app/app/static/images/architecture.png)
 
-For a full overview of the architecture [watch out the demo video](https://youtu.be/CL8gTM-HH2o) and read the installation section.
+For a full overview of the architecture [watch the demo video](https://youtu.be/CL8gTM-HH2o) and read the installation section.
 
 A few additional comments:
 
 * Lara currently only supports Slack as a frontend.
-  Messages that are sent via Slack will be mapped to intents within Dialogflow and then passed to the Lara python server, that processes the requests.
+  Messages that are sent via Slack will be mapped to intents within Dialogflow and then passed to the Lara python server which processes the requests.
 * The sqlite database is only used to store the `Slack User <-> Github Account` mappings and the necessesary tokens for authentication.
-* The Dialogflow import package `./chatbots/lara.zip` contains the trained models which map messages to intents. The project does currently not include further machine learning code.
+* The Dialogflow package `./chatbots/lara.zip` contains the trained models which map messages to intents. The project does currently not include further machine learning code.
 * The `producer`, `consumer` and `broker` services in the `docker-compose.yml` are used to periodically crawl Github for approaching milestones and to initiate conversations. They are not necessary for any features of the schema Question -> Answer.
 
 A screenshot of the services running on our EC2 instance:
