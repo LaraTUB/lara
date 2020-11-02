@@ -1,7 +1,7 @@
 Flask==1.0
 PyGithub==1.35
 pyjwt==1.5.3
-cryptography==2.3
+cryptography==3.2
 six==1.11.0
 SQLAlchemy==1.2.5
 SQLAlchemy-Utils==0.33.1
