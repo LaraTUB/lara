@@ -1,4 +1,4 @@
-Flask==1.0
+Flask==2.3.2
 PyGithub==1.35
 pyjwt==2.4.0
 cryptography==3.3.2
